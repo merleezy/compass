@@ -2,4 +2,7 @@ node_modules/
 .env
 dist/
 
-.docker/
+.docker/ 
+
+# Personal files
+CONTEXT.md 

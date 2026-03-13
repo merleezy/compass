@@ -2,26 +2,29 @@ const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv");
 const connectDB = require("./src/db");
+const habitRoutes = require("./src/routes/habits");
 
-// Load environment variables from .env
+// Config
 dotenv.config();
 
+// App
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Connect to MongoDB first, then start server
+// Infrastructure
 connectDB();
 
 // Middleware
 app.use(cors());
 app.use(express.json());
 
-// Simple health route to check if the server is running
+// Routes
+app.use("/api/habits", habitRoutes);
 app.get("/api/health", (req, res) => {
   res.json({ status: "Compass API is running" });
 });
 
-// Start server
+// Start
 app.listen(PORT, () => {
   console.log(`Listening on port ${PORT}`);
 });

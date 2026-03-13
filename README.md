@@ -10,9 +10,8 @@ A personal life dashboard for tracking habits, goals, reflections, and financial
 |---|---|
 | Frontend | React + Vite |
 | Backend | Node.js + Express |
-| Database | MongoDB (via Docker) |
+| Database | MongoDB 8.2.3 (via Docker) |
 | Charts | Recharts |
-| HTTP Client | Axios |
 | Routing | React Router DOM |
 
 ---
@@ -38,18 +37,22 @@ cd compass
 
 ### 2. Set Up Environment Variables
 
-Copy the example env files and fill in your values:
+There are two separate `.env` files — one for Docker Compose and one for the Express server.
 
+**Root `.env`** (used by Docker Compose):
 ```bash
 cp .env.example .env
 ```
-
-Open `.env` and set the following:
-
 ```
 MONGO_ROOT_USERNAME=root
 MONGO_ROOT_PASSWORD=your_password_here
+```
 
+**`server/.env`** (used by Express):
+```bash
+cp server/.env.example server/.env
+```
+```
 PORT=5000
 MONGODB_URI=mongodb://root:your_password_here@localhost:27017/compass?authSource=admin
 ```
@@ -98,10 +101,11 @@ Then open your browser to:
 ## Stopping the App
 
 ```bash
-# Stop the MongoDB container
+# Stop and remove the MongoDB container (data is safe — persisted in the Docker volume)
 docker compose down
 
-# Your data is safe — it's persisted in the Docker volume
+# Or, to pause without removing the container:
+docker compose stop
 ```
 
 ---
@@ -110,28 +114,47 @@ docker compose down
 
 All API endpoints are prefixed with `/api`.
 
+### Health
+
 | Method | Endpoint | Description |
 |---|---|---|
 | GET | `/api/health` | Check if the server is running |
 
-> More endpoints will be added as features are built out.
+### Habits
+
+| Method | Endpoint | Description |
+|---|---|---|
+| GET | `/api/habits` | Get all active habits |
+| POST | `/api/habits` | Create a new habit |
+| GET | `/api/habits/today` | Get all habits with today's completion status |
+| POST | `/api/habits/:id/log` | Mark a habit complete for today |
+| DELETE | `/api/habits/:id/log` | Undo today's completion for a habit |
 
 ---
 
 ## Roadmap
 
 ### MVP
-- [ ] Habit tracking (create, complete, view streaks)
-- [ ] Goal setting and progress tracking
-- [ ] Financial snapshot and net worth tracking
-- [ ] Dashboard with charts and progress indicators
-- [ ] Weekly and monthly review views
+- [x] Habit tracking — create and complete daily habits with progress bar
+- [ ] Edit and delete habits
+- [ ] Task list (simple, no calendar)
+- [ ] Financial snapshot — net worth calculator and projection graph
+- [ ] App shell — sidebar navigation and card-based layout
+
+### V2
+- [ ] Goal setting — milestone and metric-based goal types
+- [ ] Calendar planner with weekly/monthly view
+- [ ] Consistent styling pass across all pages
+
+### V3
+- [ ] Habit-driven goals — link habits to goals, derive progress from completion rate
+- [ ] Historical cash flow tracking — log and visualize income/expenses over time
+- [ ] Drag-and-drop reordering for habits and tasks
 
 ### Future
 - [ ] JWT authentication
 - [ ] AI-powered insights and reflections
 - [ ] Mobile-friendly responsive design
-- [ ] External integrations (calendar, finance APIs)
 
 ---
 
@@ -139,6 +162,7 @@ All API endpoints are prefixed with `/api`.
 
 - The Vite dev server proxies all `/api` requests to the Express backend — no need to hardcode `localhost:5000` in frontend code
 - MongoDB runs in Docker to keep the local environment clean, especially on WSL
+- MongoDB is pinned to version 8.2.3 (patches CVE-2025-14847)
 
 ---
 

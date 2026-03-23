@@ -1,5 +1,6 @@
 import { Routes, Route, Link } from 'react-router-dom';
 import HabitsPage from './pages/HabitsPage';
+import AppShell from './components/layout/AppShell';
 
 function HomePage() {
   return (
@@ -18,8 +19,10 @@ function App() {
       </nav>
 
       <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/habits" element={<HabitsPage />} />
+        <Route element={<AppShell />}>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/habits" element={<HabitsPage />} /> 
+        </Route>
       </Routes>
     </>
   );

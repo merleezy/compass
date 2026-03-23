@@ -20,7 +20,7 @@ A personal life dashboard for tracking habits, goals, reflections, and financial
 
 Make sure you have the following installed before setting up the project:
 
-- [Node.js](https://nodejs.org/) (v18 or higher)
+- [Node.js](https://nodejs.org/) (v20.19 or higher)
 - [Docker Desktop](https://www.docker.com/products/docker-desktop/) (with WSL 2 integration enabled)
 - Git
 

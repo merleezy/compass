@@ -9,7 +9,7 @@ import {
   Settings
 } from 'lucide-react'
 
-const NavItems = [
+const navItems = [
   { to: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
   { to: '/habits', icon: Repeat2, label: 'Habits' },
   { to: '/tasks', icon: CircleCheck, label: 'Tasks' },
@@ -24,9 +24,38 @@ export default function Sidebar() {
       {/* Logo Area */}
       <div className='px-6 mb-10 flex items-center gap-3'>
         <div className='p-2 rounded-xl bg-primary'>
-
+          <Compass size={22} className='text-white' />
+        </div>
+        <div>
+          <h1 className='text-white font-headline font-bold tracking-tight'>
+            Compass
+          </h1>
+          <p className='text-[10px] uppercase tracking-widest text-slate-400 font-body'>
+            Personal Dashboard
+          </p>
         </div>
       </div>
+
+      {/* Nav Links */}
+      <nav className='flex-1 px-4 space-y-1'>
+        {navItems.map(({ to, icon: Icon, label }) => (
+          <NavLink
+            key={to}
+            to={to}
+            className={({ isActive }) => 
+              `flex items-center gap=3 px-4 py-3 rounded-lg text-sm 
+              font-body transition-colors duration-150
+              ${isActive
+                ? 'bg-primary text-white font-semibold'
+                : 'text-slate-400 hover:text-white hover:bg-white/5'
+              }`
+            }
+          >
+            <Icon size={18} />
+            <span className='font-headline tracking-wide ml-2'>{label}</span>
+          </NavLink>
+        ))}
+      </nav>
     </aside>
   )
 }

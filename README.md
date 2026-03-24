@@ -15,6 +15,8 @@ A personal life dashboard for tracking habits, goals, reflections, and financial
 | Database | MongoDB 8.2.3 (via Docker) |
 | Charts | Recharts |
 | Routing | React Router DOM |
+| Styling | Tailwind CSS v4 |
+| Icons | Lucide React |
 
 ---
 
@@ -138,20 +140,21 @@ All API endpoints are prefixed with `/api`.
 
 ### MVP
 - [x] Habit tracking — create and complete daily habits with progress bar
+- [x] App shell — sidebar navigation, top bar, and card-based layout
+- [x] Styled habits page — progress card, habits table, create form
 - [ ] Edit and delete habits
 - [ ] Task list (simple, no calendar)
 - [ ] Financial snapshot — net worth calculator and projection graph
-- [ ] App shell — sidebar navigation and card-based layout
 
 ### V2
 - [ ] Goal setting — milestone and metric-based goal types
 - [ ] Calendar planner with weekly/monthly view
-- [ ] Consistent styling pass across all pages
 
 ### V3
 - [ ] Habit-driven goals — link habits to goals, derive progress from completion rate
 - [ ] Historical cash flow tracking — log and visualize income/expenses over time
 - [ ] Drag-and-drop reordering for habits and tasks
+- [ ] Streak tracking
 
 ### Future
 - [ ] JWT authentication
@@ -165,6 +168,8 @@ All API endpoints are prefixed with `/api`.
 - The Vite dev server proxies all `/api` requests to the Express backend — no need to hardcode `localhost:5000` in frontend code
 - MongoDB runs in Docker to keep the local environment clean, especially on WSL
 - MongoDB is pinned to version 8.2.3 (patches CVE-2025-14847)
+- Tailwind CSS v4 uses a Vite plugin (`@tailwindcss/vite`) instead of a PostCSS config — no `tailwind.config.js` needed
+- Custom design tokens (colors, fonts) are defined in `client/src/index.css` using Tailwind's `@theme` block
 
 ---
 

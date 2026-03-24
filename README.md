@@ -4,6 +4,8 @@ A personal life dashboard for tracking habits, goals, reflections, and financial
 
 ---
 
+![Habits Page](docs/habits-page.png)
+
 ## Tech Stack
 
 | Layer | Technology |

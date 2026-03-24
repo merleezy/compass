@@ -1,11 +1,10 @@
 import { useState, useEffect } from 'react';
-import HabitList from '../components/HabitList'
+import ProgressCard from '../components/habits/ProgressCard'
+import HabitList from '../components/habits/HabitList'
+import HabitForm from '../components/habits/HabitForm'
 
 export default function HabitsPage() {
   const [habits, setHabits] = useState([]);
-
-  const [newName, setNewName] = useState('')
-  const [newDescription, setNewDescription] = useState('')
 
   const fetchHabits = async () => {
     try {
@@ -27,11 +26,7 @@ export default function HabitsPage() {
   const handleToggle = async (habitId, isCurrentlyCompleted) => {
     // Immediately flip the checkbox in local state
     setHabits((prev) =>
-      prev.map((h) =>
-        h._id === habitId
-          ? { ...h, completedToday: !isCurrentlyCompleted }
-          : h
-      )
+      prev.map((h) => h._id === habitId ? { ...h, completedToday: !isCurrentlyCompleted } : h)
     );
 
     try {
@@ -46,31 +41,18 @@ export default function HabitsPage() {
       // If the API call failed, roll back the optimistic update
       // so the UI reflects reality again
       setHabits((prev) =>
-        prev.map((h) =>
-          h._id === habitId
-            ? { ...h, completedToday: isCurrentlyCompleted }
-            : h
-        )
+        prev.map((h) => h._id === habitId ? { ...h, completedToday: isCurrentlyCompleted } : h)
       );
     }
   };
 
-  const handleCreate = async (e) => {
-    e.preventDefault();
-
-    if (!newName.trim()) return;
-
+  const handleCreate = async (name, description) => {
     try {
       await fetch('/api/habits', {
         method: "POST",
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: newName, description: newDescription }),
+        body: JSON.stringify({ name, description }),
       });
-
-      // Clear the form inputs
-      setNewName('')
-      setNewDescription('')
-
       // Re-fetch to show the new habit
       fetchHabits();
     } catch (err) {
@@ -83,50 +65,30 @@ export default function HabitsPage() {
 
   return (
     <div>
-      <h1>Habits</h1>
+      {/* Page heading */}
+      <div className='mb-10'>
+        <h2 className='text-4xl font-headline font-extrabold text-text tracking-tight mb-2'>
+          Habits
+        </h2>
+        <p className='text-text-muted font-body italic'>
+          Cultivate your routine, curate your life.
+        </p>
+      </div>
 
-      {/* Progress Bar */}
-      {totalCount > 0 && (
-        <div>
-          <p>{completedCount} / {totalCount} completed today</p>
-          <div style={{ background: '#eee', borderRadius: 4, height: 12 }}>
-            <div
-              style={{
-                width: `${(completedCount / totalCount) * 100}%`,
-                background: '#4caf50',
-                height: '100%',
-                borderRadius: 4,
-                transition: 'width 0.3s ease', // smooth animation when progress changes
-              }}
-            />
-          </div>
+      {/* Two column grid */}
+      <div className='grid grid-cols-12 gap-8'>
+        {/* Left column */}
+        <div className='col-span-8 space-y-8'>
+          <ProgressCard completed={completedCount} total={totalCount}/>
+          <HabitList habits={habits} onToggle={handleToggle} />
         </div>
-      )}
 
-      {/* Habit list */}
-      <HabitList habits={habits} onToggle={handleToggle} />
+        {/* Right column */}
+        <div className="col-span-4 space-y-8">
+          <HabitForm onCreate={handleCreate} />
+        </div>
 
-      {/* New habit form */}
-      <h2>Add a Habit</h2>
-      <form onSubmit={handleCreate}>
-        <div>
-          <input 
-            type="text" 
-            placeholder="Habit name"
-            value={newName}
-            onChange={(e) => setNewName(e.target.value)}
-          />
-        </div>
-        <div>
-          <input 
-          type="text" 
-          placeholder="Description (optional)"
-          value={newDescription}
-          onChange={(e) => setNewDescription(e.target.value)}
-          />
-        </div>
-        <button type="submit">Add Habit</button>
-      </form>
+      </div>
     </div>
   );
 }

@@ -27,10 +27,10 @@ export default function Sidebar() {
           <Compass size={22} className='text-white' />
         </div>
         <div>
-          <h1 className='text-white font-headline font-bold tracking-tight'>
+          <h1 className='text-white font-headline font-bold tracking-tight text-xl'>
             Compass
           </h1>
-          <p className='text-[10px] uppercase tracking-widest text-slate-400 font-body'>
+          <p className='text-[11px] uppercase tracking-widest text-slate-400 font-body'>
             Personal Dashboard
           </p>
         </div>

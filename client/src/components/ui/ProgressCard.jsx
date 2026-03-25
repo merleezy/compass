@@ -1,4 +1,4 @@
-export default function ProgressCard({ completed, total }) {
+export default function ProgressCard({ completed, total, title }) {
   // Avoid dividing by zero if habits haven't loaded yet
   const percentage = total === 0 ? 0 : Math.round((completed / total) * 100)
   const remaining = total - completed
@@ -11,7 +11,7 @@ export default function ProgressCard({ completed, total }) {
       <div className="space-y-1">
         <p className="text-xs font-body font-semibold text-text-muted
                       uppercase tracking-wider">
-          Daily Habits Progress
+          {title}
         </p>
         <div className="flex items-baseline gap-2">
           <span className="text-3xl font-headline font-bold text-text">

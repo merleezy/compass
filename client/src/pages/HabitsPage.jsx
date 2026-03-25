@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import ProgressCard from '../components/habits/ProgressCard'
-import HabitList from '../components/habits/HabitList'
-import HabitForm from '../components/habits/HabitForm'
+import ProgressCard from '../components/ui/ProgressCard'
+import HabitList from '../components/features/habits/HabitList'
+import HabitForm from '../components/features/habits/HabitForm'
 
 export default function HabitsPage() {
   const [habits, setHabits] = useState([]);
@@ -79,7 +79,7 @@ export default function HabitsPage() {
       <div className='grid grid-cols-12 gap-8'>
         {/* Left column */}
         <div className='col-span-8 space-y-8'>
-          <ProgressCard completed={completedCount} total={totalCount}/>
+          <ProgressCard completed={completedCount} total={totalCount} title="Daily Habits Progress"/>
           <HabitList habits={habits} onToggle={handleToggle} />
         </div>
 

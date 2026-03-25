@@ -3,6 +3,7 @@ const cors = require("cors");
 const dotenv = require("dotenv");
 const connectDB = require("./src/db");
 const habitRoutes = require("./src/routes/habits");
+const taskRoutes = require("./src/routes/tasks");
 
 // Config
 dotenv.config();
@@ -20,6 +21,7 @@ app.use(express.json());
 
 // Routes
 app.use("/api/habits", habitRoutes);
+// app.use("/api/tasks", taskRoutes);
 app.get("/api/health", (req, res) => {
   res.json({ status: "Compass API is running" });
 });

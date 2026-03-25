@@ -82,7 +82,7 @@ export default function HabitForm({ onCreate }) {
           </button>
           <p className="text-[10px] text-center text-text-muted mt-4
                         font-body italic">
-            Repeat settings can be configured after creation.
+            Habit settings can be configured after creation.
           </p>
         </div>
 

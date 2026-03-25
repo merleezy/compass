@@ -1,15 +1,11 @@
 import { Routes, Route, Link } from 'react-router-dom';
 import HabitsPage from './pages/HabitsPage';
+import HomePage from './pages/HomePage'
+import TasksPage from './pages/TasksPage'
+import FinancesPage from './pages/FinancesPage'
+import GoalsPage from './pages/GoalsPage'
+import SettingsPage from './pages/SettingsPage'
 import AppShell from './components/layout/AppShell';
-
-function HomePage() {
-  return (
-    <div>
-      <h1>Compass</h1>
-      <p>Your personal dashboard is coming soon...</p>
-    </div>
-  )
-}
 
 function App() {
   return (
@@ -20,8 +16,12 @@ function App() {
 
       <Routes>
         <Route element={<AppShell />}>
-          <Route path="/" element={<HomePage />} />
+          <Route path="/dashboard" element={<HomePage />} />
           <Route path="/habits" element={<HabitsPage />} /> 
+          <Route path="/tasks" element={<TasksPage />} /> 
+          <Route path="/finances" element={<FinancesPage />} /> 
+          <Route path="/goals" element={<GoalsPage />} /> 
+          <Route path="/settings" element={<SettingsPage />} /> 
         </Route>
       </Routes>
     </>

@@ -8,7 +8,7 @@ export default function AppShell() {
       <Sidebar />
       <TopBar />
 
-      <main className="ml-64 pt-24 px-30 pb-12">
+      <main className="ml-64 pt-24 px-30 pb-12 h-full overflow-auto">
         <Outlet />
       </main>
     </div>

@@ -1,4 +1,4 @@
-import { Routes, Route, Link } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import HabitsPage from './pages/HabitsPage';
 import HomePage from './pages/HomePage'
 import TasksPage from './pages/TasksPage'
@@ -10,10 +10,6 @@ import AppShell from './components/layout/AppShell';
 function App() {
   return (
     <>
-      <nav>
-        <Link to='/'>Home</Link> | <Link to='/habits'>Habits</Link>
-      </nav>
-
       <Routes>
         <Route element={<AppShell />}>
           <Route path="/dashboard" element={<HomePage />} />

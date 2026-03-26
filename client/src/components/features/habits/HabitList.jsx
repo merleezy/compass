@@ -1,28 +1,11 @@
 import HabitItem from './HabitItem'
-import { ListFilter } from 'lucide-react'
+import ListCard from '../../ui/ListCard'
 
 export default function HabitList({ habits, onToggle }) {
   return (
-    <div className="bg-surface rounded-xl shadow-sm overflow-hidden
-                    ">
-
-      {/* Card header */}
-      <div className="px-8 py-5 flex items-center justify-between
-                      bg-surface-subtle/30 ">
-        <h3 className="text-lg font-headline font-bold text-text">
-          Today's Focus
-        </h3>
-        {/* Stub filter button — no functionality yet */}
-        <button className="flex items-center gap-1.5 text-sm font-body
-                           font-semibold text-primary hover:opacity-75
-                           transition-opacity">
-          <ListFilter size={15} />
-          Filter
-        </button>
-      </div>
-
-      {/* Table */}
-      <div className="p-4">
+    <ListCard title="Today's Focus">
+      {/* Habit-specific table content stays here */}
+      <div>
         <table className="w-full text-left border-collapse">
           <thead>
             <tr className="text-text-muted text-[11px] uppercase tracking-widest
@@ -45,7 +28,6 @@ export default function HabitList({ habits, onToggle }) {
           </tbody>
         </table>
       </div>
-
-    </div>
+    </ListCard>
   )
 }

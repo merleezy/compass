@@ -5,14 +5,18 @@ import HabitForm from '../components/features/habits/HabitForm'
 
 export default function HabitsPage() {
   const [habits, setHabits] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const fetchHabits = async () => {
+    setIsLoading(true);
     try {
       const res = await fetch('/api/habits/today');
       const data = await res.json()
       setHabits(data);
     } catch (err) {
       console.error("Failed to fetch habits", err)
+    } finally {
+      setIsLoading(false);
     }
   }
 
@@ -80,8 +84,19 @@ export default function HabitsPage() {
         {/* Left column */}
         <div className='col-span-8 space-y-8'>
           <ProgressCard completed={completedCount} total={totalCount} title="Daily Habits Progress"/>
-          <HabitList habits={habits} onToggle={handleToggle} />
+
+          {isLoading ? (
+            <div className="bg-surface rounded-xl p-8 shadow-sm">
+              <div className="flex items-center gap-3 text-text-muted">
+                <div className="h-5 w-5 rounded-full border-2 border-primary/30 border-t-primary animate-spin" />
+                <span className="font-body">Loading habits...</span>
+              </div>
+            </div>
+          ) : (
+            <HabitList habits={habits} onToggle={handleToggle} />
+          )}
         </div>
+
 
         {/* Right column */}
         <div className="col-span-4 space-y-8">

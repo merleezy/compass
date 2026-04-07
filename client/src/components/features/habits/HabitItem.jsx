@@ -8,12 +8,27 @@ export default function HabitItem({ habit, onToggle }) {
 
       {/* Checkbox cell */}
       <td className="px-4 py-5">
-        <input
-          type="checkbox"
-          checked={completedToday}
-          onChange={() => onToggle(_id, completedToday)}
-          className="w-5 h-5 rounded accent-primary cursor-pointer"
-        />
+        <div
+          onClick={() => onToggle(_id, completedToday)}
+          className={`w-5 h-5 rounded cursor-pointer flex items-center 
+                      justify-center transition-colors
+                      ${completedToday
+                        ? 'bg-primary'
+                        : 'bg-sidebar/60 border border-border'
+                      }`}
+        >
+          {completedToday && (
+            <svg viewBox="0 0 12 10" fill="none" className="w-3 h-3">
+              <path
+                d="M1 5l3.5 3.5L11 1"
+                stroke="white"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          )}
+        </div>
       </td>
 
       {/* Habit name + description */}
@@ -41,7 +56,7 @@ export default function HabitItem({ habit, onToggle }) {
 
       {/* Three-dot menu — stub, no functionality yet */}
       <td className="px-4 py-5 text-right">
-        <button className="text-primary hover:text-primary-dark 
+        <button className="text-text-muted hover:text-text 
                           cursor-pointer transition-colors">
           <EllipsisVertical size={18} />
         </button>

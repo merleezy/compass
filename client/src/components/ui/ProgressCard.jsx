@@ -34,7 +34,8 @@ export default function ProgressCard({ completed, total, title }) {
         {/* Progress bar track */}
         <div className="h-2 w-full bg-progress-track rounded-full overflow-hidden">
           <div
-            className="h-full bg-primary rounded-full transition-all duration-500"
+            className="h-full bg-primary rounded-full transition-all duration-500
+                      shadow-[0_0_12px_rgba(0,163,148,0.5)]"
             style={{ width: `${percentage}%` }}
           />
         </div>

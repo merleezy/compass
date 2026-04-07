@@ -23,8 +23,9 @@ export default function Sidebar() {
     <aside className='fixed inset-y-0 left-0 w-64 bg-sidebar flex flex-col z-50 py-8'>
       {/* Logo Area */}
       <div className='px-6 mb-10 flex items-center gap-3'>
-        <div className='p-2 rounded-xl bg-primary'>
-          <Compass size={22} className='text-white' />
+        <div className="p-2.5 rounded-xl bg-primary
+                        shadow-[0_8px_12px_rgba(0,163,148,0.35)]">
+          <Compass size={26} className="text-white" />
         </div>
         <div>
           <h1 className='text-white font-headline font-bold tracking-tight text-xl'>

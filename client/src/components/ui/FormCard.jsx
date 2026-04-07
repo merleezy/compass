@@ -1,6 +1,6 @@
 export default function FormCard({ icon: Icon, title, footer, children }) {
   return (
-    <section className="bg-surface-raised/60 rounded-xl p-8 shadow-sm">
+    <section className="bg-surface rounded-xl p-8 shadow-sm">
       <div className="flex items-center gap-2 mb-6">
         {Icon ? <Icon size={20} className="text-primary" /> : null}
         <h3 className="text-lg font-headline font-bold text-text">

@@ -4,26 +4,26 @@
 
 @theme {
   /* Backgrounds */
-  --color-bg: #f7f9fb;
-  --color-surface: #ffffff;
-  --color-surface-subtle: #e8eff3;
-  --color-surface-raised: #e1e9ee;
-  --color-sidebar: #0f172a;
+  --color-bg: #1a1c1e;
+  --color-surface: #33363d;
+  --color-surface-subtle: #3d4045;
+  --color-surface-raised: #45494f;
+  --color-sidebar: #0f1113;
 
   /* Text */
-  --color-text: #2a3439;
-  --color-text-muted: #566166;
+  --color-text: #f1f5f9;
+  --color-text-muted: #a9b4b9;
 
   /* Primary */
-  --color-primary: #006a61;
-  --color-primary-dark: #005d55;
+  --color-primary: #00a394;
+  --color-primary-dark: #00877a;
   --color-primary-light: #89f5e7;
 
   /* Borders & feedback */
-  --color-border: #a9b4b9;
-  --color-progress-track: #d8e3fb;
-  --color-error: #9f403d;
-  --color-error-light: #fe8983;
+  --color-border: #4d5157;
+  --color-progress-track: #1a1c1e;
+  --color-error: #ef4444;
+  --color-error-light: #450a0a;
 
   /* Fonts */
   --font-headline: 'Manrope', sans-serif;

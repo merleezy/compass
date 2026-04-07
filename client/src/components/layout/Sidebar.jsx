@@ -24,7 +24,7 @@ export default function Sidebar() {
       {/* Logo Area */}
       <div className='px-6 mb-10 flex items-center gap-3'>
         <div className="p-2.5 rounded-xl bg-primary
-                        shadow-[0_8px_12px_rgba(0,163,148,0.35)]">
+                        shadow-[0_6px_10px_rgba(0,163,148,0.3)]">
           <Compass size={26} className="text-white" />
         </div>
         <div>

@@ -89,6 +89,19 @@ const unlogHabit = async (req, res) => {
   }
 };
 
+const deleteHabit = async (req, res) => {
+  try {
+    const habit = await Habit.findByIdAndDelete(req.params.id);
+    if (!habit) return res.status(404).json({ error: "Habit not found" });
+
+    await HabitLog.deleteMany({ habitId: req.params.id });
+    res.json({ message: "Habit deleted" });
+  } catch (err) {
+    console.error("Failed to delete habit:", err);
+    res.status(500).json({ error: "Failed to delete habit" });
+  }
+};
+
 module.exports = {
   getHabitsToday,
   getHabits,

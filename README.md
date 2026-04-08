@@ -163,16 +163,6 @@ All API endpoints are prefixed with `/api`.
 
 ---
 
-## Development Notes
-
-- The Vite dev server proxies all `/api` requests to the Express backend — no need to hardcode `localhost:5000` in frontend code
-- MongoDB runs in Docker to keep the local environment clean, especially on WSL
-- MongoDB is pinned to version 8.2.3 (patches CVE-2025-14847)
-- Tailwind CSS v4 uses a Vite plugin (`@tailwindcss/vite`) instead of a PostCSS config — no `tailwind.config.js` needed
-- Custom design tokens (colors, fonts) are defined in `client/src/index.css` using Tailwind's `@theme` block
-
----
-
 ## License
 
 This project is for personal and portfolio use.

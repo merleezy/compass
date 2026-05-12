@@ -7,10 +7,15 @@ export default function HabitsPage() {
   const [habits, setHabits] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
+  // Detect the browser's local IANA timezone once (e.g. "America/Chicago").
+  // This is passed to every API call so the server uses the correct local date
+  // instead of UTC, which would cause habits to "reset" at 7 PM CDT.
+  const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
   const fetchHabits = async () => {
     setIsLoading(true);
     try {
-      const res = await fetch('/api/habits/today');
+      const res = await fetch(`/api/habits/today?tz=${encodeURIComponent(tz)}`);
       const data = await res.json()
       setHabits(data);
     } catch (err) {
@@ -28,22 +33,29 @@ export default function HabitsPage() {
   }, []);
 
   const handleToggle = async (habitId, isCurrentlyCompleted) => {
-    // Immediately flip the checkbox in local state
+    // Optimistically flip the checkbox
     setHabits((prev) =>
       prev.map((h) => h._id === habitId ? { ...h, completedToday: !isCurrentlyCompleted } : h)
     );
 
     try {
-      if (isCurrentlyCompleted) {
-        await fetch(`/api/habits/${habitId}/log`, { method: 'DELETE' });
-      } else {
-        await fetch(`/api/habits/${habitId}/log`, { method: "POST"});
+      const res = isCurrentlyCompleted
+        ? await fetch(`/api/habits/${habitId}/log?tz=${encodeURIComponent(tz)}`, { method: 'DELETE' })
+        : await fetch(`/api/habits/${habitId}/log?tz=${encodeURIComponent(tz)}`, { method: 'POST' });
+
+      const data = await res.json();
+
+      // Both log and unlog now return currentStreak — patch it into state
+      // so the badge updates live without a full refetch
+      if (typeof data.currentStreak === 'number') {
+        setHabits((prev) =>
+          prev.map((h) => h._id === habitId ? { ...h, currentStreak: data.currentStreak } : h)
+        );
       }
     } catch (err) {
-      console.error("Failed to toggle habits", err)
+      console.error("Failed to toggle habits", err);
 
-      // If the API call failed, roll back the optimistic update
-      // so the UI reflects reality again
+      // Roll back the optimistic update if the API call failed
       setHabits((prev) =>
         prev.map((h) => h._id === habitId ? { ...h, completedToday: isCurrentlyCompleted } : h)
       );

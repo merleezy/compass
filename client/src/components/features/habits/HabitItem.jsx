@@ -1,8 +1,46 @@
-import { EllipsisVertical, Pencil, Trash2, Check, X } from 'lucide-react'
+import { EllipsisVertical, Pencil, Trash2, Check, X, Flame } from 'lucide-react'
 import { useState, useRef, useEffect } from 'react';
 
+/* ── Streak badge: 3 visual states ─────────────────────────────────────── */
+function StreakBadge({ streak, completedToday }) {
+  // State 1: no streak at all
+  if (streak === 0) {
+    return (
+      <span className="px-2.5 py-1 rounded-full bg-surface-subtle
+                       text-text-muted text-[10px] font-body
+                       font-bold uppercase tracking-wide">
+        No streak
+      </span>
+    );
+  }
+
+  // State 2: active streak + logged today — teal (keep it up!)
+  if (completedToday) {
+    return (
+      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full
+                       bg-primary/20 border border-primary/30
+                       text-primary-light text-[10px] font-body font-bold
+                       uppercase tracking-wide">
+        <Flame size={10} className="shrink-0" />
+        {streak} {streak === 1 ? 'day' : 'days'}
+      </span>
+    );
+  }
+
+  // State 3: streak exists but NOT logged today — amber (at risk!)
+  return (
+    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full
+                     bg-amber-500/20 border border-amber-500/30
+                     text-amber-400 text-[10px] font-body font-bold
+                     uppercase tracking-wide">
+      <Flame size={10} className="shrink-0" />
+      {streak} {streak === 1 ? 'day' : 'days'}
+    </span>
+  );
+}
+
 export default function HabitItem({ habit, onToggle, onDelete, onEdit }) {
-  const { _id, name, description, completedToday } = habit;
+  const { _id, name, description, completedToday, currentStreak = 0 } = habit;
 
   const [menuOpen, setMenuOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -163,11 +201,7 @@ export default function HabitItem({ habit, onToggle, onDelete, onEdit }) {
 
       {/* Streak badge */}
       <td className="px-4 py-5">
-        <span className="px-2.5 py-1 rounded-full bg-surface-subtle
-                         text-text-muted text-[10px] font-body
-                         font-bold uppercase tracking-wide">
-          — Days
-        </span>
+        <StreakBadge streak={currentStreak} completedToday={completedToday} />
       </td>
 
       {/* Three-dot menu */}

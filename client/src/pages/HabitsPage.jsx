@@ -15,7 +15,7 @@ export default function HabitsPage() {
   const fetchHabits = async () => {
     setIsLoading(true);
     try {
-      const res = await fetch(`/api/habits/today?tz=${encodeURIComponent(tz)}`);
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/habits/today?tz=${encodeURIComponent(tz)}`);
       const data = await res.json()
       setHabits(data);
     } catch (err) {
@@ -40,8 +40,8 @@ export default function HabitsPage() {
 
     try {
       const res = isCurrentlyCompleted
-        ? await fetch(`/api/habits/${habitId}/log?tz=${encodeURIComponent(tz)}`, { method: 'DELETE' })
-        : await fetch(`/api/habits/${habitId}/log?tz=${encodeURIComponent(tz)}`, { method: 'POST' });
+        ? await fetch(`${import.meta.env.VITE_API_URL}/habits/${habitId}/log?tz=${encodeURIComponent(tz)}`, { method: 'DELETE' })
+        : await fetch(`${import.meta.env.VITE_API_URL}/habits/${habitId}/log?tz=${encodeURIComponent(tz)}`, { method: 'POST' });
 
       const data = await res.json();
 
@@ -64,7 +64,7 @@ export default function HabitsPage() {
 
   const handleCreate = async (name, description) => {
     try {
-      await fetch('/api/habits', {
+      await fetch(`${import.meta.env.VITE_API_URL}/habits`, {
         method: "POST",
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, description }),
@@ -78,7 +78,7 @@ export default function HabitsPage() {
 
   const handleDelete = async (habitId) => {
     try {
-      await fetch(`/api/habits/${habitId}`, {
+      await fetch(`${import.meta.env.VITE_API_URL}/habits/${habitId}`, {
         method: "DELETE",
       });
       setHabits((prev) => prev.filter((h) => h._id !== habitId));
@@ -89,7 +89,7 @@ export default function HabitsPage() {
 
   const handleEdit = async (habitId, name, description) => {
     try {
-      await fetch(`/api/habits/${habitId}`, {
+      await fetch(`${import.meta.env.VITE_API_URL}/habits/${habitId}`, {
         method: "PUT",
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, description }),

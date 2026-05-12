@@ -28,7 +28,7 @@ export default function HabitForm({ onCreate }) {
           value={name}
           onChange={e => setName(e.target.value)}
           placeholder="e.g. Morning Yoga"
-          className="w-full bg-surface-subtle rounded-lg px-4 py-3 text-sm font-body text-text placeholder:text-text-muted/50 focus:outline-none focus:ring-2 focus:ring-border"
+          className="w-full bg-surface-subtle rounded-lg px-4 py-3 text-base sm:text-sm font-body text-text placeholder:text-text-muted/50 focus:outline-none focus:ring-2 focus:ring-border"
         />
       </div>
 
@@ -44,7 +44,7 @@ export default function HabitForm({ onCreate }) {
           onChange={e => setDescription(e.target.value)}
           placeholder="Define your intention..."
           rows={3}
-          className="w-full bg-surface-subtle rounded-lg px-4 py-3 text-sm font-body text-text placeholder:text-text-muted/50 focus:outline-none focus:ring-2 focus:ring-border resize-none"
+          className="w-full bg-surface-subtle rounded-lg px-4 py-3 text-base sm:text-sm font-body text-text placeholder:text-text-muted/50 focus:outline-none focus:ring-2 focus:ring-border resize-none"
         />
       </div>
 

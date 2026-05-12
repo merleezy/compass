@@ -113,7 +113,7 @@ export default function HabitItem({ habit, onToggle, onDelete, onEdit }) {
               onKeyDown={handleKeyDown}
               placeholder="Habit name"
               className="w-full bg-sidebar border border-primary/40 rounded-lg px-3 py-1.5
-                         text-text font-body text-sm outline-none
+                         text-text font-body text-base sm:text-sm outline-none
                          focus:border-primary transition-colors"
             />
             <input
@@ -122,7 +122,7 @@ export default function HabitItem({ habit, onToggle, onDelete, onEdit }) {
               onKeyDown={handleKeyDown}
               placeholder="Description (optional)"
               className="w-full bg-sidebar border border-border rounded-lg px-3 py-1.5
-                         text-text-muted font-body text-xs outline-none
+                         text-text-muted font-body text-base sm:text-xs outline-none
                          focus:border-primary/50 transition-colors"
             />
           </div>

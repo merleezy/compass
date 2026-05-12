@@ -1,4 +1,4 @@
-# Compass 🧭
+# Compass
 
 A personal life dashboard for tracking habits, goals, reflections, and financial progress over time. Compass acts as a personal operating system to help you stay aligned with your long-term direction and make consistent daily progress.
 
@@ -160,16 +160,6 @@ All API endpoints are prefixed with `/api`.
 - [ ] JWT authentication
 - [ ] AI-powered insights and reflections
 - [ ] Mobile-friendly responsive design
-
----
-
-## Development Notes
-
-- The Vite dev server proxies all `/api` requests to the Express backend — no need to hardcode `localhost:5000` in frontend code
-- MongoDB runs in Docker to keep the local environment clean, especially on WSL
-- MongoDB is pinned to version 8.2.3 (patches CVE-2025-14847)
-- Tailwind CSS v4 uses a Vite plugin (`@tailwindcss/vite`) instead of a PostCSS config — no `tailwind.config.js` needed
-- Custom design tokens (colors, fonts) are defined in `client/src/index.css` using Tailwind's `@theme` block
 
 ---
 

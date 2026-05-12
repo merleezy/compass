@@ -219,7 +219,9 @@ export default function HabitItem({ habit, onToggle, onDelete, onEdit }) {
 
           {menuOpen && (
             <div
-              className="absolute right-0 z-50 mt-1 w-36 rounded-xl
+              className="absolute right-0 z-50 w-36 rounded-xl
+                         top-full mt-1 
+                         group-last:top-auto group-last:bottom-full group-last:mt-0 group-last:mb-1
                          bg-surface border border-border shadow-lg
                          overflow-hidden animate-fade-in"
             >

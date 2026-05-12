@@ -64,6 +64,30 @@ export default function HabitsPage() {
     }
   }
 
+  const handleDelete = async (habitId) => {
+    try {
+      await fetch(`/api/habits/${habitId}`, {
+        method: "DELETE",
+      });
+      setHabits((prev) => prev.filter((h) => h._id !== habitId));
+    } catch (err) {
+      console.error("Failed to delete habit", err);
+    }
+  }
+
+  const handleEdit = async (habitId, name, description) => {
+    try {
+      await fetch(`/api/habits/${habitId}`, {
+        method: "PUT",
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, description }),
+      });
+      fetchHabits();
+    } catch (err) {
+      console.error("Failed to edit habit", err);
+    }
+  }
+
   const completedCount = habits.filter((h) => h.completedToday).length;
   const totalCount = habits.length;
 
@@ -75,7 +99,7 @@ export default function HabitsPage() {
           Habits
         </h2>
         <p className='text-text-muted font-body italic'>
-          Cultivate your routine, curate your life.
+          Small actions, compounding results.
         </p>
       </div>
 
@@ -93,7 +117,7 @@ export default function HabitsPage() {
               </div>
             </div>
           ) : (
-            <HabitList habits={habits} onToggle={handleToggle} />
+            <HabitList habits={habits} onToggle={handleToggle} onDelete={handleDelete} onEdit={handleEdit}/>
           )}
         </div>
 

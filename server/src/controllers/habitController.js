@@ -102,10 +102,30 @@ const deleteHabit = async (req, res) => {
   }
 };
 
+const editHabit = async (req, res) => {
+  try {
+    const { name, description } = req.body;
+
+    if (!name || name.trim() === "") {
+      return res.status(400).json({ error: "Habit name is required" });
+    }
+
+    const habit = await Habit.findByIdAndUpdate(req.params.id, { name, description }, { new: true });
+    if (!habit) return res.status(404).json({ error: "Habit not found" });
+
+    res.json(habit);
+  } catch (err) {
+    console.error("Failed to edit habit:", err);
+    res.status(500).json({ error: "Failed to edit habit" });
+  }
+};
+
 module.exports = {
   getHabitsToday,
   getHabits,
   createHabit,
   logHabit,
   unlogHabit,
+  editHabit,
+  deleteHabit,
 };

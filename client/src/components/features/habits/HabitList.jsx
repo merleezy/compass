@@ -1,7 +1,7 @@
 import HabitItem from './HabitItem'
 import ListCard from '../../ui/ListCard'
 
-export default function HabitList({ habits, onToggle }) {
+export default function HabitList({ habits, onToggle, onDelete, onEdit }) {
   return (
     <ListCard title="Today's Focus">
       {/* Habit-specific table content stays here */}
@@ -23,6 +23,8 @@ export default function HabitList({ habits, onToggle }) {
                 key={habit._id}
                 habit={habit}
                 onToggle={onToggle}
+                onDelete={onDelete}
+                onEdit={onEdit}
               />
             ))}
           </tbody>

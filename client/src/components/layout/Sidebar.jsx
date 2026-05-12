@@ -4,16 +4,16 @@ import {
   LayoutDashboard,
   Repeat2,
   CircleCheck,
-  Wallet,
   Trophy,
-  Settings
+  Settings,
+  Brain
 } from 'lucide-react'
 
 const navItems = [
   { to: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
   { to: '/habits', icon: Repeat2, label: 'Habits' },
   { to: '/tasks', icon: CircleCheck, label: 'Tasks' },
-  { to: '/finances', icon: Wallet, label: 'Finances' },
+  { to: '/reflections', icon: Brain, label: 'Reflections' },
   { to: '/goals', icon: Trophy, label: 'Goals' },
   { to: '/settings', icon: Settings, label: 'Settings' },
 ]

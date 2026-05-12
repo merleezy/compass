@@ -107,7 +107,7 @@ export default function HabitsPage() {
     <div>
       {/* Page heading */}
       <div className='mb-10'>
-        <h2 className='text-4xl font-headline font-extrabold text-text tracking-tight mb-2'>
+        <h2 className='text-3xl md:text-4xl font-headline font-extrabold text-text tracking-tight mb-2'>
           Habits
         </h2>
         <p className='text-text-muted font-body italic'>
@@ -115,10 +115,10 @@ export default function HabitsPage() {
         </p>
       </div>
 
-      {/* Two column grid */}
-      <div className='grid grid-cols-12 gap-8'>
+      {/* Two column grid — stacks on mobile, side-by-side on lg+ */}
+      <div className='grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8'>
         {/* Left column */}
-        <div className='col-span-8 space-y-8'>
+        <div className='lg:col-span-8 space-y-6 lg:space-y-8'>
           <ProgressCard completed={completedCount} total={totalCount} title="Daily Habits Progress"/>
 
           {isLoading ? (
@@ -133,9 +133,8 @@ export default function HabitsPage() {
           )}
         </div>
 
-
         {/* Right column */}
-        <div className="col-span-4 space-y-8">
+        <div className="lg:col-span-4 space-y-6 lg:space-y-8">
           <HabitForm onCreate={handleCreate} />
         </div>
 

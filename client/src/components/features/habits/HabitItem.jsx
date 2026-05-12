@@ -199,8 +199,8 @@ export default function HabitItem({ habit, onToggle, onDelete, onEdit }) {
         )}
       </td>
 
-      {/* Streak badge */}
-      <td className="px-4 py-5">
+      {/* Streak badge — hidden on xs screens to match the header */}
+      <td className="px-4 py-5 hidden sm:table-cell">
         <StreakBadge streak={currentStreak} completedToday={completedToday} />
       </td>
 

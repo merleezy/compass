@@ -104,7 +104,7 @@ export default function HabitItem({ habit, onToggle, onDelete, onEdit }) {
         <td className="px-4 py-4" />
 
         {/* edit fields */}
-        <td className="px-4 py-4" colSpan={2}>
+        <td className="px-4 py-4">
           <div className="flex flex-col gap-2">
             <input
               ref={nameRef}
@@ -128,9 +128,12 @@ export default function HabitItem({ habit, onToggle, onDelete, onEdit }) {
           </div>
         </td>
 
+        {/* hidden streak column placeholder */}
+        <td className="hidden sm:table-cell" />
+
         {/* save / cancel */}
         <td className="px-4 py-4 text-right">
-          <div className="flex items-center justify-end gap-2">
+          <div className="flex flex-col sm:flex-row items-end sm:items-center justify-end gap-2">
             <button
               onClick={handleSave}
               disabled={!editedName.trim()}
@@ -197,6 +200,10 @@ export default function HabitItem({ habit, onToggle, onDelete, onEdit }) {
             {description}
           </p>
         )}
+        {/* Mobile-only streak badge (stacked under description) */}
+        <div className="mt-2 sm:hidden inline-block">
+          <StreakBadge streak={currentStreak} completedToday={completedToday} />
+        </div>
       </td>
 
       {/* Streak badge — hidden on xs screens to match the header */}
@@ -210,7 +217,7 @@ export default function HabitItem({ habit, onToggle, onDelete, onEdit }) {
           <button
             onClick={() => setMenuOpen((o) => !o)}
             className="text-text-muted hover:text-text cursor-pointer
-                       transition-colors opacity-0 group-hover:opacity-100
+                       transition-colors opacity-100 md:opacity-0 md:group-hover:opacity-100
                        focus:opacity-100"
             aria-label="Habit options"
           >

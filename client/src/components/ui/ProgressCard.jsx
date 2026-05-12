@@ -4,8 +4,8 @@ export default function ProgressCard({ completed, total, title }) {
   const remaining = total - completed
 
   return (
-    <div className="bg-surface rounded-xl p-8 flex items-center justify-between
-                    shadow-sm">
+    <div className="bg-surface rounded-xl p-6 sm:p-8 flex flex-col sm:flex-row 
+                    sm:items-center justify-between gap-6 sm:gap-0 shadow-sm">
 
       {/* Left — counts */}
       <div className="space-y-1">
@@ -22,7 +22,7 @@ export default function ProgressCard({ completed, total, title }) {
       </div>
 
       {/* Right — progress bar */}
-      <div className="flex-1 max-w-md ml-12">
+      <div className="flex-1 w-full sm:ml-12">
         <div className="flex justify-between mb-2">
           <span className="text-xs font-body font-medium text-primary">
             {percentage}% Progress

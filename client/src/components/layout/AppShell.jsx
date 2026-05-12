@@ -20,7 +20,7 @@ export default function AppShell() {
   const sidebarW = collapsed ? 'lg:w-16' : 'lg:w-64';
 
   return (
-    <div className="h-screen overflow-hidden bg-bg text-text">
+    <div className="h-[100dvh] overflow-hidden bg-bg text-text">
 
       {/* Mobile backdrop — shown when drawer is open */}
       {mobileOpen && (
@@ -44,7 +44,7 @@ export default function AppShell() {
 
       {/* Main content shifts with the sidebar on desktop */}
       <main
-        className={`pt-16 pb-12 h-full overflow-auto transition-all duration-300
+        className={`mt-16 h-[calc(100dvh-4rem)] overflow-auto transition-all duration-300
                     px-6 md:px-10 lg:px-14
                     ${collapsed ? 'lg:ml-16' : 'lg:ml-64'}`}
       >

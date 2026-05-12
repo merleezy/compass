@@ -200,8 +200,8 @@ export default function HabitItem({ habit, onToggle, onDelete, onEdit }) {
             {description}
           </p>
         )}
-        {/* Mobile-only streak badge (stacked under description) */}
-        <div className="mt-2 sm:hidden inline-block">
+        {/* Mobile-only streak badge — opacity-100 overrides the parent td's opacity-50 */}
+        <div className="mt-2 sm:hidden inline-block opacity-100">
           <StreakBadge streak={currentStreak} completedToday={completedToday} />
         </div>
       </td>

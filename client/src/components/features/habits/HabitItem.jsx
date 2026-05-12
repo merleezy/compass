@@ -190,18 +190,19 @@ export default function HabitItem({ habit, onToggle, onDelete, onEdit }) {
       </td>
 
       {/* Habit name + description */}
-      <td className={`px-4 py-5 ${completedToday ? 'opacity-50' : ''}`}>
+      <td className="px-4 py-5">
         <p className={`font-body font-semibold text-text
-                       ${completedToday ? 'line-through' : ''}`}>
+                       ${completedToday ? 'line-through opacity-50' : ''}`}>
           {name}
         </p>
         {description && (
-          <p className="text-xs text-text-muted font-body mt-0.5">
+          <p className={`text-xs text-text-muted font-body mt-0.5
+                         ${completedToday ? 'opacity-50' : ''}`}>
             {description}
           </p>
         )}
-        {/* Mobile-only streak badge — opacity-100 overrides the parent td's opacity-50 */}
-        <div className="mt-2 sm:hidden inline-block opacity-100">
+        {/* Mobile-only streak badge — sits outside any opacity reduction */}
+        <div className="mt-2 sm:hidden inline-block">
           <StreakBadge streak={currentStreak} completedToday={completedToday} />
         </div>
       </td>

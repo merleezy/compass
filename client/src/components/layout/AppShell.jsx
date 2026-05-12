@@ -48,7 +48,7 @@ export default function AppShell() {
                     px-6 md:px-10 lg:px-14
                     ${collapsed ? 'lg:ml-16' : 'lg:ml-64'}`}
       >
-        <div className="py-8">
+        <div className="py-8 max-w-screen-2xl mx-auto">
           <Outlet />
         </div>
       </main>

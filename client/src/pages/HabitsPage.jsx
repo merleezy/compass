@@ -40,8 +40,8 @@ export default function HabitsPage() {
 
     try {
       const res = isCurrentlyCompleted
-        ? await fetch(`${process.env.VITE_API_URL}/habits/${habitId}/log?tz=${encodeURIComponent(tz)}`, { method: 'DELETE' })
-        : await fetch(`${process.env.VITE_API_URL}/habits/${habitId}/log?tz=${encodeURIComponent(tz)}`, { method: 'POST' });
+        ? await fetch(`${import.meta.env.VITE_API_URL}/habits/${habitId}/log?tz=${encodeURIComponent(tz)}`, { method: 'DELETE' })
+        : await fetch(`${import.meta.env.VITE_API_URL}/habits/${habitId}/log?tz=${encodeURIComponent(tz)}`, { method: 'POST' });
 
       const data = await res.json();
 
@@ -64,7 +64,7 @@ export default function HabitsPage() {
 
   const handleCreate = async (name, description) => {
     try {
-      await fetch(`${process.env.VITE_API_URL}/habits`, {
+      await fetch(`${import.meta.env.VITE_API_URL}/habits`, {
         method: "POST",
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, description }),
@@ -78,7 +78,7 @@ export default function HabitsPage() {
 
   const handleDelete = async (habitId) => {
     try {
-      await fetch(`${process.env.VITE_API_URL}/habits/${habitId}`, {
+      await fetch(`${import.meta.env.VITE_API_URL}/habits/${habitId}`, {
         method: "DELETE",
       });
       setHabits((prev) => prev.filter((h) => h._id !== habitId));
@@ -89,7 +89,7 @@ export default function HabitsPage() {
 
   const handleEdit = async (habitId, name, description) => {
     try {
-      await fetch(`${process.env.VITE_API_URL}/habits/${habitId}`, {
+      await fetch(`${import.meta.env.VITE_API_URL}/habits/${habitId}`, {
         method: "PUT",
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, description }),
@@ -119,7 +119,7 @@ export default function HabitsPage() {
       <div className='grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8'>
         {/* Left column */}
         <div className='lg:col-span-8 space-y-6 lg:space-y-8'>
-          <ProgressCard completed={completedCount} total={totalCount} title="Daily Habits Progress"/>
+          <ProgressCard completed={completedCount} total={totalCount} title="Daily Habits Progress" />
 
           {isLoading ? (
             <div className="bg-surface rounded-xl p-8 shadow-sm">
@@ -129,7 +129,7 @@ export default function HabitsPage() {
               </div>
             </div>
           ) : (
-            <HabitList habits={habits} onToggle={handleToggle} onDelete={handleDelete} onEdit={handleEdit}/>
+            <HabitList habits={habits} onToggle={handleToggle} onDelete={handleDelete} onEdit={handleEdit} />
           )}
         </div>
 

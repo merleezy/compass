@@ -1,4 +1,4 @@
-# Compass 🧭
+# Compass
 
 A personal life dashboard for tracking habits, goals, reflections, and financial progress over time. Compass acts as a personal operating system to help you stay aligned with your long-term direction and make consistent daily progress.
 

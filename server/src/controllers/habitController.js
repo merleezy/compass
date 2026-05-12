@@ -49,6 +49,10 @@ const computeStreakFromDates = (dates, today) => {
 const getHabitsToday = async (req, res) => {
   try {
     const today = getTodayString(req.query.tz);
+    // TODO: 90-day rolling window — any streak longer than 90 days will be
+    // incorrectly reported as 0 since older logs are excluded from the query.
+    // Fix: persist currentStreak on the Habit document (like longestStreak)
+    // and update it on each log/unlog, removing the need for a window entirely.
     const startDate = subtractDays(today, 90);
 
     const habits = await Habit.find({ isActive: true });
@@ -124,6 +128,7 @@ const logHabit = async (req, res) => {
     const log = await HabitLog.create({ habitId: req.params.id, date: today });
 
     // Compute new current streak to check against longestStreak
+    // TODO: same 90-day window limitation as getHabitsToday (see above)
     const startDate = subtractDays(today, 90);
     const recentLogs = await HabitLog.find({
       habitId: req.params.id,
@@ -159,6 +164,7 @@ const unlogHabit = async (req, res) => {
     await HabitLog.findOneAndDelete({ habitId: req.params.id, date: today });
 
     // Recompute streak from the remaining logs (today is now gone)
+    // TODO: same 90-day window limitation as getHabitsToday (see above)
     const startDate = subtractDays(today, 90);
     const recentLogs = await HabitLog.find({
       habitId: req.params.id,

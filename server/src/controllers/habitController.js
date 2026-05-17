@@ -6,8 +6,13 @@ const HabitLog = require("../models/HabitLog");
 // en-CA locale produces YYYY-MM-DD format natively.
 const getTodayString = (tz) => {
   try {
-    if (tz) return new Intl.DateTimeFormat("en-CA", { timeZone: tz }).format(new Date());
-  } catch (_) { /* invalid tz — fall through */ }
+    if (tz)
+      return new Intl.DateTimeFormat("en-CA", { timeZone: tz }).format(
+        new Date(),
+      );
+  } catch (_) {
+    /* invalid tz — fall through */
+  }
   return new Date().toISOString().split("T")[0];
 };
 
@@ -18,42 +23,12 @@ const subtractDays = (dateStr, days) => {
   return d.toISOString().split("T")[0];
 };
 
-// Helper: given an array of YYYY-MM-DD date strings and today's date,
-// walk backwards from today (or yesterday if not completed today) and
-// count consecutive logged days.
-const computeStreakFromDates = (dates, today) => {
-  if (!dates || dates.length === 0) return 0;
-
-  const dateSet = new Set(dates);
-
-  const prevDay = (dateStr) => {
-    const d = new Date(dateStr + "T12:00:00Z");
-    d.setUTCDate(d.getUTCDate() - 1);
-    return d.toISOString().split("T")[0];
-  };
-
-  // If completed today start counting from today, otherwise from yesterday
-  let current = dateSet.has(today) ? today : prevDay(today);
-  let streak = 0;
-
-  while (dateSet.has(current)) {
-    streak++;
-    current = prevDay(current);
-  }
-
-  return streak;
-};
-
 // GET /api/habits/today
 // Returns all active habits, with completedToday and currentStreak
 const getHabitsToday = async (req, res) => {
   try {
     const today = getTodayString(req.query.tz);
-    // TODO: 90-day rolling window — any streak longer than 90 days will be
-    // incorrectly reported as 0 since older logs are excluded from the query.
-    // Fix: persist currentStreak on the Habit document (like longestStreak)
-    // and update it on each log/unlog, removing the need for a window entirely.
-    const startDate = subtractDays(today, 90);
+    const yesterday = subtractDays(today, 1);
 
     const habits = await Habit.find({ isActive: true });
 
@@ -61,24 +36,23 @@ const getHabitsToday = async (req, res) => {
     const todayLogs = await HabitLog.find({ date: today });
     const completedIds = new Set(todayLogs.map((l) => l.habitId.toString()));
 
-    // Batch-fetch all logs in the last 90 days — one DB round trip for all habits
-    const recentLogs = await HabitLog.find({ date: { $gte: startDate } });
-
-    // Group log dates by habitId for fast lookup
-    const logsByHabit = {};
-    for (const log of recentLogs) {
-      const id = log.habitId.toString();
-      if (!logsByHabit[id]) logsByHabit[id] = [];
-      logsByHabit[id].push(log.date);
-    }
-
     const result = habits.map((habit) => {
       const id = habit._id.toString();
-      const dates = logsByHabit[id] || [];
-      const currentStreak = computeStreakFromDates(dates, today);
+      const isCompletedToday = completedIds.has(id);
+      let currentStreak = habit.currentStreak || 0;
+
+      // A streak is broken if it wasn't completed today AND wasn't completed yesterday
+      if (
+        !isCompletedToday &&
+        habit.lastLoggedDate !== yesterday &&
+        habit.lastLoggedDate !== today
+      ) {
+        currentStreak = 0;
+      }
+
       return {
         ...habit.toObject(),
-        completedToday: completedIds.has(id),
+        completedToday: isCompletedToday,
         currentStreak,
       };
     });
@@ -125,22 +99,23 @@ const createHabit = async (req, res) => {
 const logHabit = async (req, res) => {
   try {
     const today = getTodayString(req.query.tz);
+    const yesterday = subtractDays(today, 1);
+
     const log = await HabitLog.create({ habitId: req.params.id, date: today });
 
-    // Compute new current streak to check against longestStreak
-    // TODO: same 90-day window limitation as getHabitsToday (see above)
-    const startDate = subtractDays(today, 90);
-    const recentLogs = await HabitLog.find({
-      habitId: req.params.id,
-      date: { $gte: startDate },
-    });
-    const currentStreak = computeStreakFromDates(
-      recentLogs.map((l) => l.date),
-      today
-    );
+    const habit = await Habit.findById(req.params.id);
+    if (!habit) {
+      return res.status(404).json({ error: "Habit not found" });
+    }
 
-    // $max only writes if currentStreak > longestStreak — safe to always run
+    let currentStreak = 1;
+    if (habit.lastLoggedDate === yesterday) {
+      currentStreak = (habit.currentStreak || 0) + 1;
+    }
+
     await Habit.findByIdAndUpdate(req.params.id, {
+      currentStreak,
+      lastLoggedDate: today,
       $max: { longestStreak: currentStreak },
     });
 
@@ -161,19 +136,41 @@ const logHabit = async (req, res) => {
 const unlogHabit = async (req, res) => {
   try {
     const today = getTodayString(req.query.tz);
-    await HabitLog.findOneAndDelete({ habitId: req.params.id, date: today });
+    const yesterday = subtractDays(today, 1);
 
-    // Recompute streak from the remaining logs (today is now gone)
-    // TODO: same 90-day window limitation as getHabitsToday (see above)
-    const startDate = subtractDays(today, 90);
-    const recentLogs = await HabitLog.find({
+    const deletedLog = await HabitLog.findOneAndDelete({
       habitId: req.params.id,
-      date: { $gte: startDate },
+      date: today,
     });
-    const currentStreak = computeStreakFromDates(
-      recentLogs.map((l) => l.date),
-      today
-    );
+
+    const habit = await Habit.findById(req.params.id);
+    if (!habit) {
+      return res.status(404).json({ error: "Habit not found" });
+    }
+
+    let currentStreak = habit.currentStreak || 0;
+
+    // Only update the Habit document if we actually removed a log
+    if (deletedLog) {
+      currentStreak = Math.max(0, currentStreak - 1);
+      let lastLoggedDate = null;
+
+      if (currentStreak > 0) {
+        lastLoggedDate = yesterday;
+      } else {
+        const lastLog = await HabitLog.findOne({ habitId: req.params.id }).sort(
+          {
+            date: -1,
+          },
+        );
+        if (lastLog) lastLoggedDate = lastLog.date;
+      }
+
+      await Habit.findByIdAndUpdate(req.params.id, {
+        currentStreak,
+        lastLoggedDate,
+      });
+    }
 
     res.json({ message: "Log removed", currentStreak });
   } catch (err) {
@@ -206,7 +203,7 @@ const editHabit = async (req, res) => {
     const habit = await Habit.findByIdAndUpdate(
       req.params.id,
       { name, description },
-      { new: true }
+      { new: true },
     );
     if (!habit) return res.status(404).json({ error: "Habit not found" });
 

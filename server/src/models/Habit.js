@@ -23,6 +23,16 @@ const habitSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+
+    currentStreak: {
+      type: Number,
+      default: 0,
+    },
+
+    lastLoggedDate: {
+      type: String,
+      default: null,
+    },
   },
   {
     timestamps: true,

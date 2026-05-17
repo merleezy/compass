@@ -1,4 +1,4 @@
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import HabitsPage from './pages/HabitsPage';
 import HomePage from './pages/HomePage'
 import TasksPage from './pages/TasksPage'
@@ -11,6 +11,7 @@ function App() {
   return (
     <>
       <Routes>
+        <Route path="/" element={<Navigate to="/dashboard" replace />} />
         <Route element={<AppShell />}>
           <Route path="/dashboard" element={<HomePage />} />
           <Route path="/habits" element={<HabitsPage />} /> 
@@ -19,6 +20,7 @@ function App() {
           <Route path="/goals" element={<GoalsPage />} /> 
           <Route path="/settings" element={<SettingsPage />} /> 
         </Route>
+        <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>
     </>
   );

@@ -5,19 +5,22 @@ function getToday() {
   return new Intl.DateTimeFormat('en-CA').format(new Date())
 }
 
-function SectionDivider({ label, count }) {
+const sectionLabelColor = {
+  overdue:   'text-error',
+  today:     'text-primary',
+  upcoming:  'text-amber-400',
+  completed: 'text-text-muted',
+}
+
+function SectionHeader({ label, count, urgency }) {
   return (
-    <tr>
-      <td colSpan={4} className="px-4 pt-4 pb-1">
-        <div className="flex items-center gap-3">
-          <span className="text-[10px] font-body font-bold uppercase tracking-widest text-text-muted/70">
-            {label}
-          </span>
-          <span className="text-[10px] font-body text-text-muted/40">({count})</span>
-          <div className="flex-1 h-px bg-white/5" />
-        </div>
-      </td>
-    </tr>
+    <div className="flex items-center gap-2 px-1 mb-2">
+      <span className={`text-[10px] font-body font-bold uppercase tracking-widest
+                        ${sectionLabelColor[urgency]}`}>
+        {label}
+      </span>
+      <span className="text-[10px] font-body text-text-muted/40">{count}</span>
+    </div>
   )
 }
 
@@ -28,8 +31,6 @@ export default function TaskList({
 }) {
   const today = getToday()
 
-  // Pending tasks are visually complete but stay in their original group
-  // until the 2.5s misclick window expires
   const isEffectivelyComplete = (t) => t.completed && !pendingComplete.has(t._id)
 
   const overdue  = tasks.filter(t => !isEffectivelyComplete(t) && t.dueDate && t.dueDate < today)
@@ -79,61 +80,56 @@ export default function TaskList({
           </p>
         </div>
       ) : (
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="text-text-muted text-[11px] uppercase tracking-widest
-                             font-body font-bold border-b border-white/5">
-                <th className="px-4 py-3 font-medium">Status</th>
-                <th className="px-4 py-3 font-medium">Task</th>
-                <th className="px-4 py-3 font-medium hidden sm:table-cell">Due</th>
-                <th className="px-4 py-3" />
-              </tr>
-            </thead>
-            <tbody className="text-sm divide-y divide-white/5">
+        <div className="p-4 space-y-6">
 
-              {overdue.length > 0 && (
-                <>
-                  <SectionDivider label="Overdue" count={overdue.length} />
-                  {overdue.map(task => (
-                    <TaskItem key={task._id} task={task}
-                      onToggle={onToggle} onDelete={onDelete} onEdit={onEdit} />
-                  ))}
-                </>
-              )}
+          {overdue.length > 0 && (
+            <div>
+              <SectionHeader label="Overdue" count={overdue.length} urgency="overdue" />
+              <div className="space-y-2">
+                {overdue.map(task => (
+                  <TaskItem key={task._id} task={task} urgency="overdue"
+                    onToggle={onToggle} onDelete={onDelete} onEdit={onEdit} />
+                ))}
+              </div>
+            </div>
+          )}
 
-              {dueToday.length > 0 && (
-                <>
-                  <SectionDivider label="Due Today" count={dueToday.length} />
-                  {dueToday.map(task => (
-                    <TaskItem key={task._id} task={task}
-                      onToggle={onToggle} onDelete={onDelete} onEdit={onEdit} />
-                  ))}
-                </>
-              )}
+          {dueToday.length > 0 && (
+            <div>
+              <SectionHeader label="Due Today" count={dueToday.length} urgency="today" />
+              <div className="space-y-2">
+                {dueToday.map(task => (
+                  <TaskItem key={task._id} task={task} urgency="today"
+                    onToggle={onToggle} onDelete={onDelete} onEdit={onEdit} />
+                ))}
+              </div>
+            </div>
+          )}
 
-              {upcoming.length > 0 && (
-                <>
-                  <SectionDivider label="Upcoming" count={upcoming.length} />
-                  {upcoming.map(task => (
-                    <TaskItem key={task._id} task={task}
-                      onToggle={onToggle} onDelete={onDelete} onEdit={onEdit} />
-                  ))}
-                </>
-              )}
+          {upcoming.length > 0 && (
+            <div>
+              <SectionHeader label="Upcoming" count={upcoming.length} urgency="upcoming" />
+              <div className="space-y-2">
+                {upcoming.map(task => (
+                  <TaskItem key={task._id} task={task} urgency="upcoming"
+                    onToggle={onToggle} onDelete={onDelete} onEdit={onEdit} />
+                ))}
+              </div>
+            </div>
+          )}
 
-              {showCompleted && completed.length > 0 && (
-                <>
-                  <SectionDivider label="Completed" count={completed.length} />
-                  {completed.map(task => (
-                    <TaskItem key={task._id} task={task}
-                      onToggle={onToggle} onDelete={onDelete} onEdit={onEdit} />
-                  ))}
-                </>
-              )}
+          {showCompleted && completed.length > 0 && (
+            <div>
+              <SectionHeader label="Completed" count={completed.length} urgency="completed" />
+              <div className="space-y-2">
+                {completed.map(task => (
+                  <TaskItem key={task._id} task={task} urgency="completed"
+                    onToggle={onToggle} onDelete={onDelete} onEdit={onEdit} />
+                ))}
+              </div>
+            </div>
+          )}
 
-            </tbody>
-          </table>
         </div>
       )}
     </ListCard>

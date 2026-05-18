@@ -57,3 +57,12 @@
 .animate-fade-in {
   animation: fadeIn 0.12s ease-out forwards;
 }
+
+@keyframes shimmer {
+  from { transform: translateX(-100%); }
+  to   { transform: translateX(200%); }
+}
+
+.animate-shimmer {
+  animation: shimmer 0.7s ease-in-out forwards;
+}

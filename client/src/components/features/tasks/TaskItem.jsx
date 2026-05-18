@@ -9,8 +9,8 @@ const borderColor = {
   completed: 'border-border',
 }
 
-const editInputClass = `w-full bg-sidebar border rounded-lg px-3 py-2
-                        font-body text-sm outline-none transition-colors`
+const editInputClass = `w-full bg-surface-subtle border rounded-lg px-3 py-2
+                        font-body text-base sm:text-sm outline-none transition-colors`
 
 export default function TaskItem({ task, urgency, onToggle, onDelete, onEdit }) {
   const { _id, title, description, dueDate, completed } = task
@@ -83,13 +83,13 @@ export default function TaskItem({ task, urgency, onToggle, onDelete, onEdit }) 
             onChange={e => setEditedDesc(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="Description (optional)"
-            className={`${editInputClass} border-border text-text-muted text-xs focus:border-primary/50`}
+            className={`${editInputClass} border-border text-text-muted text-base sm:text-xs focus:border-primary/50`}
           />
           <input
             type="date"
             value={editedDate}
             onChange={e => setEditedDate(e.target.value)}
-            className={`${editInputClass} border-border text-text-muted text-xs [color-scheme:dark] focus:border-primary/50`}
+            className={`${editInputClass} border-border text-text-muted text-base sm:text-xs [color-scheme:dark] focus:border-primary/50`}
           />
         </div>
         <div className="flex justify-end gap-2 mt-3">

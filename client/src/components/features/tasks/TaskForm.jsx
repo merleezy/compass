@@ -1,28 +1,28 @@
-import { useState } from 'react'
-import { CirclePlus } from 'lucide-react'
-import FormCard from '../../ui/FormCard'
+import { useState } from "react";
+import { CirclePlus } from "lucide-react";
+import FormCard from "../../ui/FormCard";
 
 export default function TaskForm({ onCreate, onClose }) {
-  const [title, setTitle] = useState('')
-  const [description, setDescription] = useState('')
-  const [dueDate, setDueDate] = useState('')
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [dueDate, setDueDate] = useState("");
 
   function handleSubmit() {
-    if (!title.trim()) return
-    onCreate(title.trim(), description.trim(), dueDate || null)
-    onClose()
+    if (!title.trim()) return;
+    onCreate(title.trim(), description.trim(), dueDate || null);
+    onClose();
   }
 
   function handleKeyDown(e) {
-    if (e.key === 'Enter' && e.target.tagName !== 'TEXTAREA') {
-      e.preventDefault()
-      handleSubmit()
+    if (e.key === "Enter" && e.target.tagName !== "TEXTAREA") {
+      e.preventDefault();
+      handleSubmit();
     }
   }
 
   const inputClass = `w-full bg-surface-subtle rounded-lg px-4 py-3 text-base sm:text-sm
                       font-body text-text placeholder:text-text-muted/50
-                      focus:outline-none focus:ring-2 focus:ring-border`
+                      focus:outline-none focus:ring-2 focus:ring-border`;
 
   return (
     <FormCard
@@ -37,7 +37,7 @@ export default function TaskForm({ onCreate, onClose }) {
         <input
           type="text"
           value={title}
-          onChange={e => setTitle(e.target.value)}
+          onChange={(e) => setTitle(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder="e.g. Review pull requests"
           autoFocus
@@ -48,11 +48,13 @@ export default function TaskForm({ onCreate, onClose }) {
       <div>
         <label className="block text-xs font-body font-bold text-text-muted uppercase tracking-wider mb-2">
           Description
-          <span className="normal-case tracking-normal ml-1 font-normal">(optional)</span>
+          <span className="normal-case tracking-normal ml-1 font-normal">
+            (optional)
+          </span>
         </label>
         <textarea
           value={description}
-          onChange={e => setDescription(e.target.value)}
+          onChange={(e) => setDescription(e.target.value)}
           placeholder="Add any notes..."
           rows={3}
           className={`${inputClass} resize-none`}
@@ -62,13 +64,15 @@ export default function TaskForm({ onCreate, onClose }) {
       <div>
         <label className="block text-xs font-body font-bold text-text-muted uppercase tracking-wider mb-2">
           Due Date
-          <span className="normal-case tracking-normal ml-1 font-normal">(optional)</span>
+          <span className="normal-case tracking-normal ml-1 font-normal">
+            (optional)
+          </span>
         </label>
         {/* [color-scheme:dark] tells the browser to render the native date picker in dark mode */}
         <input
           type="date"
           value={dueDate}
-          onChange={e => setDueDate(e.target.value)}
+          onChange={(e) => setDueDate(e.target.value)}
           className={`${inputClass} [color-scheme:dark]`}
         />
       </div>
@@ -85,5 +89,5 @@ export default function TaskForm({ onCreate, onClose }) {
         </button>
       </div>
     </FormCard>
-  )
+  );
 }

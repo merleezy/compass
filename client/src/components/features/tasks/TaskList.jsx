@@ -1,3 +1,4 @@
+import { ChevronDown, ChevronRight } from 'lucide-react'
 import TaskItem from './TaskItem'
 import ListCard from '../../ui/ListCard'
 
@@ -21,6 +22,27 @@ function SectionHeader({ label, count, urgency }) {
       </span>
       <span className="text-[10px] font-body text-text-muted/40">{count}</span>
     </div>
+  )
+}
+
+function CompletedSectionHeader({ count, isOpen, onToggle }) {
+  const Icon = isOpen ? ChevronDown : ChevronRight
+  return (
+    <button
+      onClick={onToggle}
+      className="w-full flex items-center gap-2 px-1 py-1 group
+                 text-text-muted hover:text-text transition-colors"
+    >
+      <Icon size={12} className="shrink-0" />
+      <span className="text-[10px] font-body font-bold uppercase tracking-widest">
+        Completed
+      </span>
+      <span className="text-[10px] font-body text-text-muted/40">{count}</span>
+      <span className="ml-auto text-[10px] font-body text-text-muted/40
+                       group-hover:text-text-muted transition-colors">
+        click a check to restore
+      </span>
+    </button>
   )
 }
 
@@ -49,25 +71,15 @@ export default function TaskList({
   const isEmpty = !hasActiveTasks && completed.length === 0
 
   const actions = (
-    <div className="flex items-center gap-3">
-      {completed.length > 0 && (
-        <button
-          onClick={onToggleCompleted}
-          className="text-xs font-body text-text-muted hover:text-text transition-colors"
-        >
-          {showCompleted ? 'Hide completed' : `Show completed (${completed.length})`}
-        </button>
-      )}
-      <button
-        onClick={onAdd}
-        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg
-                   bg-primary text-white text-xs font-headline font-bold
-                   hover:bg-primary-dark transition-colors
-                   shadow-[0_2px_8px_rgba(0,106,97,0.35)]"
-      >
-        + New Task
-      </button>
-    </div>
+    <button
+      onClick={onAdd}
+      className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg
+                 bg-primary text-white text-xs font-headline font-bold
+                 hover:bg-primary-dark transition-colors
+                 shadow-[0_2px_8px_rgba(0,106,97,0.35)]"
+    >
+      + New Task
+    </button>
   )
 
   return (
@@ -118,15 +130,21 @@ export default function TaskList({
             </div>
           )}
 
-          {showCompleted && completed.length > 0 && (
-            <div>
-              <SectionHeader label="Completed" count={completed.length} urgency="completed" />
-              <div className="space-y-2">
-                {completed.map(task => (
-                  <TaskItem key={task._id} task={task} urgency="completed"
-                    onToggle={onToggle} onDelete={onDelete} onEdit={onEdit} />
-                ))}
-              </div>
+          {completed.length > 0 && (
+            <div className="border-t border-border pt-4">
+              <CompletedSectionHeader
+                count={completed.length}
+                isOpen={showCompleted}
+                onToggle={onToggleCompleted}
+              />
+              {showCompleted && (
+                <div className="space-y-2 mt-3">
+                  {completed.map(task => (
+                    <TaskItem key={task._id} task={task} urgency="completed"
+                      onToggle={onToggle} onDelete={onDelete} onEdit={onEdit} />
+                  ))}
+                </div>
+              )}
             </div>
           )}
 

@@ -16,11 +16,11 @@ const sectionLabelColor = {
 function SectionHeader({ label, count, urgency }) {
   return (
     <div className="flex items-center gap-2 px-1 mb-2">
-      <span className={`text-[10px] font-body font-bold uppercase tracking-widest
+      <span className={`text-xs font-body font-bold uppercase tracking-widest
                         ${sectionLabelColor[urgency]}`}>
         {label}
       </span>
-      <span className="text-[10px] font-body text-text-muted/40">{count}</span>
+      <span className="text-xs font-body text-text-muted/40">{count}</span>
     </div>
   )
 }
@@ -33,12 +33,12 @@ function CompletedSectionHeader({ count, isOpen, onToggle }) {
       className="w-full flex items-center gap-2 px-1 py-1 group
                  text-text-muted hover:text-text transition-colors"
     >
-      <Icon size={12} className="shrink-0" />
-      <span className="text-[10px] font-body font-bold uppercase tracking-widest">
+      <Icon size={14} className="shrink-0" />
+      <span className="text-xs font-body font-bold uppercase tracking-widest">
         Completed
       </span>
-      <span className="text-[10px] font-body text-text-muted/40">{count}</span>
-      <span className="ml-auto text-[10px] font-body text-text-muted/40
+      <span className="text-xs font-body text-text-muted/40">{count}</span>
+      <span className="ml-auto text-xs font-body text-text-muted/40
                        group-hover:text-text-muted transition-colors">
         click a check to restore
       </span>

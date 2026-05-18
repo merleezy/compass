@@ -1,9 +1,21 @@
 import HabitItem from './HabitItem'
 import ListCard from '../../ui/ListCard'
 
-export default function HabitList({ habits, onToggle, onDelete, onEdit }) {
+export default function HabitList({ habits, onToggle, onDelete, onEdit, onAdd }) {
+  const actions = (
+    <button
+      onClick={onAdd}
+      className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg
+                 bg-primary text-white text-xs font-headline font-bold
+                 hover:bg-primary-dark transition-colors
+                 shadow-[0_2px_8px_rgba(0,106,97,0.35)]"
+    >
+      + New Habit
+    </button>
+  )
+
   return (
-    <ListCard title="Today's Focus">
+    <ListCard title="Today's Focus" actions={actions}>
       {/* overflow-x-auto lets the table scroll horizontally on narrow screens */}
       <div className="overflow-x-auto">
         <table className="w-full text-left border-collapse">

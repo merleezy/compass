@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { CirclePlus } from 'lucide-react'
 import FormCard from '../../ui/FormCard'
 
-export default function HabitForm({ onCreate }) {
+export default function HabitForm({ onCreate, onClose }) {
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
 
@@ -11,6 +11,7 @@ export default function HabitForm({ onCreate }) {
     await onCreate(name.trim(), description.trim())
     setName('')
     setDescription('')
+    onClose?.()
   }
 
   return (

@@ -2,10 +2,12 @@ import { useState, useEffect } from 'react';
 import ProgressCard from '../components/ui/ProgressCard'
 import HabitList from '../components/features/habits/HabitList'
 import HabitForm from '../components/features/habits/HabitForm'
+import Modal from '../components/ui/Modal'
 
 export default function HabitsPage() {
   const [habits, setHabits] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [modalOpen, setModalOpen] = useState(false);
 
   // Detect the browser's local IANA timezone once (e.g. "America/Chicago").
   // This is passed to every API call so the server uses the correct local date
@@ -115,30 +117,32 @@ export default function HabitsPage() {
         </p>
       </div>
 
-      {/* Two column grid — stacks on mobile, side-by-side on lg+ */}
-      <div className='grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8'>
-        {/* Left column */}
-        <div className='lg:col-span-8 space-y-6 lg:space-y-8'>
-          <ProgressCard completed={completedCount} total={totalCount} title="Daily Habits Progress" />
+      <div className="space-y-6 lg:space-y-8">
+        <ProgressCard completed={completedCount} total={totalCount} title="Daily Habits Progress" />
 
-          {isLoading ? (
-            <div className="bg-surface rounded-xl p-8 shadow-sm">
-              <div className="flex items-center gap-3 text-text-muted">
-                <div className="h-5 w-5 rounded-full border-2 border-primary/30 border-t-primary animate-spin" />
-                <span className="font-body">Loading habits...</span>
-              </div>
+        {isLoading ? (
+          <div className="bg-surface rounded-xl p-8 shadow-sm">
+            <div className="flex items-center gap-3 text-text-muted">
+              <div className="h-5 w-5 rounded-full border-2 border-primary/30 border-t-primary animate-spin" />
+              <span className="font-body">Loading habits...</span>
             </div>
-          ) : (
-            <HabitList habits={habits} onToggle={handleToggle} onDelete={handleDelete} onEdit={handleEdit} />
-          )}
-        </div>
-
-        {/* Right column */}
-        <div className="lg:col-span-4 space-y-6 lg:space-y-8">
-          <HabitForm onCreate={handleCreate} />
-        </div>
-
+          </div>
+        ) : (
+          <HabitList
+            habits={habits}
+            onToggle={handleToggle}
+            onDelete={handleDelete}
+            onEdit={handleEdit}
+            onAdd={() => setModalOpen(true)}
+          />
+        )}
       </div>
+
+      {modalOpen && (
+        <Modal onClose={() => setModalOpen(false)}>
+          <HabitForm onCreate={handleCreate} onClose={() => setModalOpen(false)} />
+        </Modal>
+      )}
     </div>
   );
 }

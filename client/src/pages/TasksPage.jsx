@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import TaskList from '../components/features/tasks/TaskList';
 import TaskForm from '../components/features/tasks/TaskForm';
 import Modal from '../components/ui/Modal';
@@ -12,7 +12,7 @@ export default function TasksPage() {
   // Timeout IDs stored in a ref — updating them shouldn't trigger re-renders
   const timeoutsRef = useRef({});
 
-  const fetchTasks = async () => {
+  const fetchTasks = useCallback(async () => {
     setIsLoading(true);
     try {
       const res = await fetch(`${import.meta.env.VITE_API_URL}/tasks`);
@@ -23,11 +23,11 @@ export default function TasksPage() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchTasks();
-  }, []);
+  }, [fetchTasks]);
 
   const handleCreate = async (title, description, dueDate) => {
     try {

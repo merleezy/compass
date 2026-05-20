@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import ProgressCard from '../components/ui/ProgressCard';
 import HabitList from '../components/features/habits/HabitList';
 import HabitForm from '../components/features/habits/HabitForm';
@@ -14,7 +14,7 @@ export default function HabitsPage() {
   // instead of UTC, which would cause habits to "reset" at 7 PM CDT.
   const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-  const fetchHabits = async () => {
+  const fetchHabits = useCallback(async () => {
     setIsLoading(true);
     try {
       const res = await fetch(
@@ -27,14 +27,11 @@ export default function HabitsPage() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [tz]);
 
   useEffect(() => {
-    const fetchData = async () => {
-      await fetchHabits();
-    };
-    fetchData();
-  }, []);
+    fetchHabits();
+  }, [fetchHabits]);
 
   const handleToggle = async (habitId, isCurrentlyCompleted) => {
     // Optimistically flip the checkbox

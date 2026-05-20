@@ -68,12 +68,12 @@ export default function TaskForm({ onCreate, onClose }) {
             (optional)
           </span>
         </label>
-        {/* [color-scheme:dark] tells the browser to render the native date picker in dark mode */}
+        {/* scheme-dark tells the browser to render the native date picker in dark mode */}
         <input
           type="date"
           value={dueDate}
           onChange={(e) => setDueDate(e.target.value)}
-          className={`${inputClass} [color-scheme:dark]`}
+          className={`${inputClass} scheme-dark`}
         />
       </div>
 

@@ -89,7 +89,7 @@ export default function TaskItem({ task, urgency, onToggle, onDelete, onEdit }) 
             type="date"
             value={editedDate}
             onChange={e => setEditedDate(e.target.value)}
-            className={`${editInputClass} border-border text-text-muted text-base sm:text-xs [color-scheme:dark] focus:border-primary/50`}
+            className={`${editInputClass} border-border text-text-muted text-base sm:text-xs scheme-dark focus:border-primary/50`}
           />
         </div>
         <div className="flex justify-end gap-2 mt-3">
@@ -165,7 +165,9 @@ export default function TaskItem({ task, urgency, onToggle, onDelete, onEdit }) 
         </button>
 
         {menuOpen && (
-          <div className="absolute right-0 z-50 w-36 rounded-xl top-full mt-1
+          <div className="absolute right-0 z-50 w-36 rounded-xl
+                          top-full mt-1
+                          group-last:top-auto group-last:bottom-full group-last:mt-0 group-last:mb-1
                           bg-surface border border-border shadow-lg
                           overflow-hidden animate-fade-in">
             <button

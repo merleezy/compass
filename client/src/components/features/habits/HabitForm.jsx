@@ -14,6 +14,13 @@ export default function HabitForm({ onCreate, onClose }) {
     onClose?.()
   }
 
+  function handleKeyDown(e) {
+    if (e.key === 'Enter' && e.target.tagName !== 'TEXTAREA') {
+      e.preventDefault()
+      handleSubmit()
+    }
+  }
+
   return (
     <FormCard
       icon={CirclePlus}
@@ -28,7 +35,9 @@ export default function HabitForm({ onCreate, onClose }) {
           type="text"
           value={name}
           onChange={e => setName(e.target.value)}
+          onKeyDown={handleKeyDown}
           placeholder="e.g. Morning Yoga"
+          autoFocus
           className="w-full bg-surface-subtle rounded-lg px-4 py-3 text-base sm:text-sm font-body text-text placeholder:text-text-muted/50 focus:outline-none focus:ring-2 focus:ring-border"
         />
       </div>

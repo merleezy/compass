@@ -44,7 +44,7 @@ const editTask = async (req, res) => {
       req.params.id,
       { title, description, dueDate, tags },
       {
-        new: true,
+        returnDocument: 'after',
         runValidators: true,
       },
     );
@@ -80,7 +80,7 @@ const completeTask = async (req, res) => {
       req.params.id,
       { completed: true },
       {
-        new: true,
+        returnDocument: 'after',
         runValidators: true,
       },
     );
@@ -102,7 +102,7 @@ const uncompleteTask = async (req, res) => {
       req.params.id,
       { completed: false },
       {
-        new: true,
+        returnDocument: 'after',
         runValidators: true,
       },
     );

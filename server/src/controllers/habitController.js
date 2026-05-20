@@ -202,7 +202,7 @@ const editHabit = async (req, res) => {
     const habit = await Habit.findByIdAndUpdate(
       req.params.id,
       { name, description },
-      { new: true },
+      { returnDocument: 'after' },
     );
     if (!habit) return res.status(404).json({ error: 'Habit not found' });
 

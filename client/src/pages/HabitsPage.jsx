@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
-import ProgressCard from '../components/ui/ProgressCard'
-import HabitList from '../components/features/habits/HabitList'
-import HabitForm from '../components/features/habits/HabitForm'
-import Modal from '../components/ui/Modal'
+import ProgressCard from '../components/ui/ProgressCard';
+import HabitList from '../components/features/habits/HabitList';
+import HabitForm from '../components/features/habits/HabitForm';
+import Modal from '../components/ui/Modal';
 
 export default function HabitsPage() {
   const [habits, setHabits] = useState([]);
@@ -17,15 +17,17 @@ export default function HabitsPage() {
   const fetchHabits = async () => {
     setIsLoading(true);
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/habits/today?tz=${encodeURIComponent(tz)}`);
-      const data = await res.json()
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/habits/today?tz=${encodeURIComponent(tz)}`,
+      );
+      const data = await res.json();
       setHabits(data);
     } catch (err) {
-      console.error("Failed to fetch habits", err)
+      console.error('Failed to fetch habits', err);
     } finally {
       setIsLoading(false);
     }
-  }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -37,13 +39,24 @@ export default function HabitsPage() {
   const handleToggle = async (habitId, isCurrentlyCompleted) => {
     // Optimistically flip the checkbox
     setHabits((prev) =>
-      prev.map((h) => h._id === habitId ? { ...h, completedToday: !isCurrentlyCompleted } : h)
+      prev.map((h) => (h._id === habitId ? { ...h, completedToday: !isCurrentlyCompleted } : h)),
     );
 
     try {
       const res = isCurrentlyCompleted
-        ? await fetch(`${import.meta.env.VITE_API_URL}/habits/${habitId}/log?tz=${encodeURIComponent(tz)}`, { method: 'DELETE' })
-        : await fetch(`${import.meta.env.VITE_API_URL}/habits/${habitId}/log?tz=${encodeURIComponent(tz)}`, { method: 'POST' });
+        ? await fetch(
+            `${import.meta.env.VITE_API_URL}/habits/${habitId}/log?tz=${encodeURIComponent(tz)}`,
+            { method: 'DELETE' },
+          )
+        : await fetch(
+            `${import.meta.env.VITE_API_URL}/habits/${habitId}/log?tz=${encodeURIComponent(tz)}`,
+            { method: 'POST' },
+          );
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.error || 'Failed to toggle habit!');
+      }
 
       const data = await res.json();
 
@@ -51,56 +64,71 @@ export default function HabitsPage() {
       // so the badge updates live without a full refetch
       if (typeof data.currentStreak === 'number') {
         setHabits((prev) =>
-          prev.map((h) => h._id === habitId ? { ...h, currentStreak: data.currentStreak } : h)
+          prev.map((h) => (h._id === habitId ? { ...h, currentStreak: data.currentStreak } : h)),
         );
       }
     } catch (err) {
-      console.error("Failed to toggle habits", err);
+      console.error('Failed to toggle habits', err);
 
       // Roll back the optimistic update if the API call failed
       setHabits((prev) =>
-        prev.map((h) => h._id === habitId ? { ...h, completedToday: isCurrentlyCompleted } : h)
+        prev.map((h) => (h._id === habitId ? { ...h, completedToday: isCurrentlyCompleted } : h)),
       );
     }
   };
 
   const handleCreate = async (name, description) => {
     try {
-      await fetch(`${import.meta.env.VITE_API_URL}/habits`, {
-        method: "POST",
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/habits`, {
+        method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, description }),
       });
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.error || 'Failed to create habit!');
+      }
       // Re-fetch to show the new habit
       fetchHabits();
     } catch (err) {
-      console.error("Failed to create new habit", err);
+      console.error('Failed to create new habit', err);
     }
-  }
+  };
 
   const handleDelete = async (habitId) => {
     try {
-      await fetch(`${import.meta.env.VITE_API_URL}/habits/${habitId}`, {
-        method: "DELETE",
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/habits/${habitId}`, {
+        method: 'DELETE',
       });
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.error || 'Failed to delete habit!');
+      }
       setHabits((prev) => prev.filter((h) => h._id !== habitId));
     } catch (err) {
-      console.error("Failed to delete habit", err);
+      console.error('Failed to delete habit', err);
     }
-  }
+  };
 
   const handleEdit = async (habitId, name, description) => {
     try {
-      await fetch(`${import.meta.env.VITE_API_URL}/habits/${habitId}`, {
-        method: "PUT",
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/habits/${habitId}`, {
+        method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, description }),
       });
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.error || 'Failed to edit habit!');
+      }
       fetchHabits();
     } catch (err) {
-      console.error("Failed to edit habit", err);
+      console.error('Failed to edit habit', err);
     }
-  }
+  };
 
   const completedCount = habits.filter((h) => h.completedToday).length;
   const totalCount = habits.length;
@@ -108,13 +136,11 @@ export default function HabitsPage() {
   return (
     <div>
       {/* Page heading */}
-      <div className='mb-10'>
-        <h2 className='text-3xl md:text-4xl font-headline font-extrabold text-text tracking-tight mb-2'>
+      <div className="mb-10">
+        <h2 className="text-3xl md:text-4xl font-headline font-extrabold text-text tracking-tight mb-2">
           Habits
         </h2>
-        <p className='text-text-muted font-body italic'>
-          Small actions, compounding results.
-        </p>
+        <p className="text-text-muted font-body italic">Small actions, compounding results.</p>
       </div>
 
       <div className="space-y-6 lg:space-y-8">

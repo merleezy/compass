@@ -1,26 +1,23 @@
-const Habit = require("../models/Habit");
-const HabitLog = require("../models/HabitLog");
+const Habit = require('../models/Habit');
+const HabitLog = require('../models/HabitLog');
 
 // Helper: returns today's date as a YYYY-MM-DD string in the given IANA
 // timezone (e.g. "America/Chicago"). Falls back to UTC if absent/invalid.
 // en-CA locale produces YYYY-MM-DD format natively.
 const getTodayString = (tz) => {
   try {
-    if (tz)
-      return new Intl.DateTimeFormat("en-CA", { timeZone: tz }).format(
-        new Date(),
-      );
+    if (tz) return new Intl.DateTimeFormat('en-CA', { timeZone: tz }).format(new Date());
   } catch (_) {
     /* invalid tz — fall through */
   }
-  return new Date().toISOString().split("T")[0];
+  return new Date().toISOString().split('T')[0];
 };
 
 // Helper: subtract N days from a YYYY-MM-DD string, returns YYYY-MM-DD
 const subtractDays = (dateStr, days) => {
-  const d = new Date(dateStr + "T12:00:00Z"); // noon UTC avoids DST edge cases
+  const d = new Date(dateStr + 'T12:00:00Z'); // noon UTC avoids DST edge cases
   d.setUTCDate(d.getUTCDate() - days);
-  return d.toISOString().split("T")[0];
+  return d.toISOString().split('T')[0];
 };
 
 // GET /api/habits/today
@@ -59,8 +56,8 @@ const getHabitsToday = async (req, res) => {
 
     res.json(result);
   } catch (err) {
-    console.error("Failed to fetch habits:", err);
-    res.status(500).json({ error: "Failed to fetch habits" });
+    console.error('Failed to fetch habits:', err);
+    res.status(500).json({ error: 'Failed to fetch habits' });
   }
 };
 
@@ -71,8 +68,8 @@ const getHabits = async (req, res) => {
     const habits = await Habit.find({ isActive: true });
     res.json(habits);
   } catch (err) {
-    console.error("Failed to fetch habits:", err);
-    res.status(500).json({ error: "Failed to fetch habits" });
+    console.error('Failed to fetch habits:', err);
+    res.status(500).json({ error: 'Failed to fetch habits' });
   }
 };
 
@@ -82,15 +79,15 @@ const createHabit = async (req, res) => {
   try {
     const { name, description } = req.body;
 
-    if (!name || name.trim() === "") {
-      return res.status(400).json({ error: "Habit name is required" });
+    if (!name || name.trim() === '') {
+      return res.status(400).json({ error: 'Habit name is required' });
     }
 
     const habit = await Habit.create({ name, description });
     res.status(201).json(habit);
   } catch (err) {
-    console.error("Failed to create habit:", err);
-    res.status(500).json({ error: "Failed to create habit" });
+    console.error('Failed to create habit:', err);
+    res.status(500).json({ error: 'Failed to create habit' });
   }
 };
 
@@ -105,7 +102,7 @@ const logHabit = async (req, res) => {
 
     const habit = await Habit.findById(req.params.id);
     if (!habit) {
-      return res.status(404).json({ error: "Habit not found" });
+      return res.status(404).json({ error: 'Habit not found' });
     }
 
     let currentStreak = 1;
@@ -124,10 +121,10 @@ const logHabit = async (req, res) => {
     // Error code 11000 is MongoDB's "duplicate key" error
     // This fires when the compound index blocks a double completion
     if (err.code === 11000) {
-      return res.status(409).json({ error: "Habit already logged for today" });
+      return res.status(409).json({ error: 'Habit already logged for today' });
     }
-    console.error("Failed to log habit:", err);
-    res.status(500).json({ error: "Failed to log habit" });
+    console.error('Failed to log habit:', err);
+    res.status(500).json({ error: 'Failed to log habit' });
   }
 };
 
@@ -145,7 +142,7 @@ const unlogHabit = async (req, res) => {
 
     const habit = await Habit.findById(req.params.id);
     if (!habit) {
-      return res.status(404).json({ error: "Habit not found" });
+      return res.status(404).json({ error: 'Habit not found' });
     }
 
     let currentStreak = habit.currentStreak || 0;
@@ -158,11 +155,9 @@ const unlogHabit = async (req, res) => {
       if (currentStreak > 0) {
         lastLoggedDate = yesterday;
       } else {
-        const lastLog = await HabitLog.findOne({ habitId: req.params.id }).sort(
-          {
-            date: -1,
-          },
-        );
+        const lastLog = await HabitLog.findOne({ habitId: req.params.id }).sort({
+          date: -1,
+        });
         if (lastLog) lastLoggedDate = lastLog.date;
       }
 
@@ -172,32 +167,36 @@ const unlogHabit = async (req, res) => {
       });
     }
 
-    res.json({ message: "Log removed", currentStreak });
+    res.json({ message: 'Log removed', currentStreak });
   } catch (err) {
-    console.error("Failed to remove log:", err);
-    res.status(500).json({ error: "Failed to remove log" });
+    console.error('Failed to remove log:', err);
+    res.status(500).json({ error: 'Failed to remove log' });
   }
 };
 
+// DELETE /api/habits/:id
+// Deletes a habit
 const deleteHabit = async (req, res) => {
   try {
     const habit = await Habit.findByIdAndDelete(req.params.id);
-    if (!habit) return res.status(404).json({ error: "Habit not found" });
+    if (!habit) return res.status(404).json({ error: 'Habit not found' });
 
     await HabitLog.deleteMany({ habitId: req.params.id });
-    res.json({ message: "Habit deleted" });
+    res.json({ message: 'Habit deleted' });
   } catch (err) {
-    console.error("Failed to delete habit:", err);
-    res.status(500).json({ error: "Failed to delete habit" });
+    console.error('Failed to delete habit:', err);
+    res.status(500).json({ error: 'Failed to delete habit' });
   }
 };
 
+// PATCH /api/habits/:id
+// Edits a habit
 const editHabit = async (req, res) => {
   try {
     const { name, description } = req.body;
 
-    if (!name || name.trim() === "") {
-      return res.status(400).json({ error: "Habit name is required" });
+    if (!name || name.trim() === '') {
+      return res.status(400).json({ error: 'Habit name is required' });
     }
 
     const habit = await Habit.findByIdAndUpdate(
@@ -205,12 +204,12 @@ const editHabit = async (req, res) => {
       { name, description },
       { new: true },
     );
-    if (!habit) return res.status(404).json({ error: "Habit not found" });
+    if (!habit) return res.status(404).json({ error: 'Habit not found' });
 
     res.json(habit);
   } catch (err) {
-    console.error("Failed to edit habit:", err);
-    res.status(500).json({ error: "Failed to edit habit" });
+    console.error('Failed to edit habit:', err);
+    res.status(500).json({ error: 'Failed to edit habit' });
   }
 };
 

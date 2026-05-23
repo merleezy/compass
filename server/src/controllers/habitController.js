@@ -7,7 +7,7 @@ const HabitLog = require('../models/HabitLog');
 const getTodayString = (tz) => {
   try {
     if (tz) return new Intl.DateTimeFormat('en-CA', { timeZone: tz }).format(new Date());
-  } catch (_) {
+  } catch {
     /* invalid tz — fall through */
   }
   return new Date().toISOString().split('T')[0];

@@ -4,26 +4,27 @@ A personal life dashboard for tracking habits, goals, reflections, and financial
 
 **Live demo:** https://compass-seven-psi.vercel.app/habits
 
-![Habits Page](docs/habits-page.png)
+![Habits Page](docs/demo-images/habits-page.png)
 
 ---
 
 ## Tech Stack
 
-| Layer | Technology |
-|---|---|
-| Frontend | React + Vite |
-| Styling | Tailwind CSS v4 |
-| Backend | Node.js + Express |
-| Database | MongoDB Atlas |
-| Charts | Recharts |
-| Icons | Lucide React |
+| Layer    | Technology        |
+| -------- | ----------------- |
+| Frontend | React + Vite      |
+| Styling  | Tailwind CSS v4   |
+| Backend  | Node.js + Express |
+| Database | MongoDB Atlas     |
+| Charts   | Recharts          |
+| Icons    | Lucide React      |
 
 ---
 
 ## Running Locally
 
 ### Prerequisites
+
 - [Node.js](https://nodejs.org/) v20+
 - [Docker Desktop](https://www.docker.com/products/docker-desktop/) (for local MongoDB)
 
@@ -39,12 +40,14 @@ cd ../client && npm install
 ```
 
 Create `server/.env`:
+
 ```
 PORT=5000
 MONGODB_URI=mongodb+srv://<user>:<password>@<cluster>.mongodb.net/compass
 ```
 
 Create `client/.env`:
+
 ```
 VITE_API_URL=http://localhost:5000/api
 ```

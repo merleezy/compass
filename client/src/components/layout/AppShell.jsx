@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import { Outlet } from "react-router-dom";
-import Sidebar from './Sidebar'
-import TopBar from './TopBar'
+import { Outlet } from 'react-router-dom';
+import Sidebar from './Sidebar';
+import TopBar from './TopBar';
 
 export default function AppShell() {
   // Desktop: collapsed = icon-only rail; Mobile: collapsed = fully hidden
@@ -12,16 +12,15 @@ export default function AppShell() {
   // Close mobile drawer whenever the viewport grows past the lg breakpoint
   useEffect(() => {
     const mq = window.matchMedia('(min-width: 1024px)');
-    const handler = (e) => { if (e.matches) setMobileOpen(false); };
+    const handler = (e) => {
+      if (e.matches) setMobileOpen(false);
+    };
     mq.addEventListener('change', handler);
     return () => mq.removeEventListener('change', handler);
   }, []);
 
-  const sidebarW = collapsed ? 'lg:w-16' : 'lg:w-64';
-
   return (
-    <div className="h-[100dvh] overflow-hidden bg-bg text-text">
-
+    <div className="h-dvh overflow-hidden bg-bg text-text">
       {/* Mobile backdrop — shown when drawer is open */}
       {mobileOpen && (
         <div
@@ -37,10 +36,7 @@ export default function AppShell() {
         setMobileOpen={setMobileOpen}
       />
 
-      <TopBar
-        collapsed={collapsed}
-        onMenuClick={() => setMobileOpen((o) => !o)}
-      />
+      <TopBar collapsed={collapsed} onMenuClick={() => setMobileOpen((o) => !o)} />
 
       {/* Main content shifts with the sidebar on desktop */}
       <main
@@ -52,7 +48,6 @@ export default function AppShell() {
           <Outlet />
         </div>
       </main>
-
     </div>
   );
 }

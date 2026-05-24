@@ -23,48 +23,56 @@ This document tracks the current state of Compass features and outlines our plan
 ### Phase 1: MVP (In Progress)
 
 #### Habits (Complete)
-*   Create, Read, Update, Delete (CRUD) persistence.
-*   Daily resets adjusted to local timezone.
-*   Hybrid streak tracking (3-state streak badge: active, safe, broken).
-*   Progress card shimmer animations.
+
+- Create, Read, Update, Delete (CRUD) persistence.
+- Daily resets adjusted to local timezone.
+- Hybrid streak tracking (3-state streak badge: active, safe, broken).
+- Progress card shimmer animations.
 
 #### Tasks (Complete)
-*   CRUD database persistence.
-*   Client-side urgency grouping (Overdue, Today, Upcoming, Completed).
-*   2.5-second undo delay window.
-*   Urgency-colored left borders on cards.
+
+- CRUD database persistence.
+- Client-side urgency grouping (Overdue, Today, Upcoming, Completed).
+- 2.5-second undo delay window.
+- Urgency-colored left borders on cards.
 
 #### Reflections (Next Up)
-*   Daily journal/reflection pages tracked by calendar date.
-*   Day rating slider (scale 1–10).
-*   Historical charts displaying rating scores over time.
-*   Weekly stats scorecard summarizing tasks completed, average scores, and habit check-ins.
+
+- Daily journal/reflection pages tracked by calendar date.
+- Day rating slider (scale 1–10).
+- Historical charts displaying rating scores over time.
+- Weekly stats scorecard summarizing tasks completed, average scores, and habit check-ins.
 
 ---
 
 ### Phase 2: Goal Tracking & Planning (V2)
 
 #### Goals Page
-*   **Milestone Goals:** Sub-task checklists where progress bar is derived from completed percentages.
-*   **Metric Goals:** Set target values (e.g. "Lose 20 lbs"), log updates, and graph the trend line over time.
+
+- **Milestone Goals:** Sub-task checklists where progress bar is derived from completed percentages.
+- **Metric Goals:** Set target values (e.g. "Lose 20 lbs"), log updates, and graph the trend line over time.
 
 #### Task Tagging & Metadata
-*   Add custom tags (e.g., "Work", "Personal") to tasks.
-*   Add task time estimates.
-*   Filter lists by active tags.
+
+- Add custom tags (e.g., "Work", "Personal") to tasks.
+- Add task time estimates.
+- Filter lists by active tags.
 
 #### Weekly Calendar Planner
-*   Visual weekly calendar grid.
-*   Drag-and-drop tasks from an unscheduled sidebar onto calendar slots.
+
+- Visual weekly calendar grid.
+- Drag-and-drop tasks from an unscheduled sidebar onto calendar slots.
 
 ---
 
 ### Phase 3: Advanced Types & Finance (V3)
 
 #### Progressive & Limit Habits
-*   **Progressive:** Increment numerical metrics towards a goal (e.g., drink 8 cups of water).
-*   **Limit:** Stay under a maximum threshold (e.g., limit caffeine intake).
+
+- **Progressive:** Increment numerical metrics towards a goal (e.g., drink 8 cups of water).
+- **Limit:** Stay under a maximum threshold (e.g., limit caffeine intake).
 
 #### Financial Planner
-*   **Net Worth Tracker:** Log asset and liability balances.
-*   **Cash Flow Forecaster:** Input recurring revenues and expenses to chart projected balances over 5–20 years using return rate sliders.
+
+- **Net Worth Tracker:** Log asset and liability balances.
+- **Cash Flow Forecaster:** Input recurring revenues and expenses to chart projected balances over 5–20 years using return rate sliders.

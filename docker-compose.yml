@@ -4,7 +4,7 @@ services:
     container_name: compass-mongo
     restart: unless-stopped
     ports:
-      - "27017:27017"
+      - '27017:27017'
 
     volumes:
       - compass-mongo-data:/data/db

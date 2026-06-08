@@ -46,11 +46,9 @@ describe('Habits API', () => {
   // Happy path: reading all active habits
   describe('GET /api/habits', () => {
     it('should return only active habits, filtering out inactive ones', async () => {
-      // Direct DB insertion is preferred over API calls for test setup.
-      // This way, if POST is broken, only the POST tests fail — not these ones.
       await Habit.create([
         { name: 'Meditate', description: '10 minutes' },
-        { name: 'Read', description: '20 pages', isActive: false }, // soft-deleted habit
+        { name: 'Read', description: '20 pages', isActive: false },
       ]);
 
       const res = await request(app).get('/api/habits');
@@ -138,14 +136,11 @@ describe('Habits API', () => {
 
     // Sad path: the habit existence check must happen BEFORE creating the log
     it('should return 404 and not create an orphaned HabitLog for a non-existent habit', async () => {
-      const fakeId = '000000000000000000000000'; // valid ObjectId format, but no matching Habit doc
+      const fakeId = '000000000000000000000000';
       const res = await request(app).post(`/api/habits/${fakeId}/log`);
       expect(res.statusCode).toBe(404);
       expect(res.body).toHaveProperty('error', 'Habit not found');
 
-      // Critical: verify no dangling HabitLog was written to the database.
-      // Without this assertion, a test could pass even if the controller creates
-      // orphaned logs before returning the 404.
       const orphanedLog = await HabitLog.findOne({ habitId: fakeId });
       expect(orphanedLog).toBeNull();
     });
@@ -198,9 +193,7 @@ describe('Habits API', () => {
       expect(dbLog).toBeNull();
     });
 
-    // Sad path: unlogging when nothing was logged today is a no-op, not an error.
-    // The controller handles this gracefully — it simply skips the DB update
-    // if no log document was found to delete.
+    // Sad path: unlogging when nothing was logged today
     it('should return 200 gracefully if the habit was not logged today', async () => {
       const habit = await Habit.create({ name: 'Unlogged Habit' });
 

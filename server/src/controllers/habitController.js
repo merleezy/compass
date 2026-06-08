@@ -98,12 +98,12 @@ const logHabit = async (req, res) => {
     const today = getTodayString(req.query.tz);
     const yesterday = subtractDays(today, 1);
 
-    const log = await HabitLog.create({ habitId: req.params.id, date: today });
-
     const habit = await Habit.findById(req.params.id);
     if (!habit) {
       return res.status(404).json({ error: 'Habit not found' });
     }
+
+    const log = await HabitLog.create({ habitId: req.params.id, date: today });
 
     let currentStreak = 1;
     if (habit.lastLoggedDate === yesterday) {
@@ -178,10 +178,13 @@ const unlogHabit = async (req, res) => {
 // Deletes a habit
 const deleteHabit = async (req, res) => {
   try {
-    const habit = await Habit.findByIdAndDelete(req.params.id);
+    const habit = await Habit.findByIdAndUpdate(
+      req.params.id,
+      { isActive: false },
+      { returnDocument: 'after' },
+    );
     if (!habit) return res.status(404).json({ error: 'Habit not found' });
 
-    await HabitLog.deleteMany({ habitId: req.params.id });
     res.json({ message: 'Habit deleted' });
   } catch (err) {
     console.error('Failed to delete habit:', err);

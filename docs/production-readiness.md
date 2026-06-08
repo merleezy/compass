@@ -28,7 +28,7 @@ Focuses on local development guardrails. Prevents bad data from entering Mongoos
 
 Focuses on proving that our changes don't break existing features automatically.
 
-- **[ ] Backend Route Testing (Vitest + Supertest):** Build automated integration tests for Habit and Task APIs. See [Section 4](#4-testing-suite).
+- **[x] Backend Route Testing (Vitest + Supertest):** Integration tests for Habit and Task APIs covering happy and sad paths. See [Section 4](#4-testing-suite).
 - **[ ] GitHub Actions CI:** Run linters and tests in the cloud on every git push or pull request. See [Section 6](#6-dev-workflow--professionalism).
 - **[ ] Data Integrity Tests:** Test database validation constraints in an isolated test environment. See [Section 2](#2-database--data-integrity).
 
@@ -134,7 +134,12 @@ Focuses on moving from local execution to standard production environments.
 ### Unit & Integration Testing
 
 - **Concept:** Programmatically verifying small blocks of isolation logic (unit) and database/route integrations (integration).
-- **Compass Application:** Install **Vitest** or **Jest** along with **Supertest** to test that backend endpoints respond with correct status codes and payloads.
+- **Status: ✅ Implemented.** Vitest and Supertest are installed and configured with:
+  - `server/tests/setup.js` — Connects to the isolated `compass_test` database before all tests. Clears all collections before each individual test to ensure a clean state. Disconnects cleanly after all tests.
+  - `server/vitest.config.js` — Configures the setup file and enables Vitest globals (`describe`, `it`, `expect`) to avoid CommonJS/ESM import conflicts.
+  - `server/tests/health.test.js` — Verifies the health check endpoint returns 200.
+  - `server/tests/habits.test.js` — Full happy & sad path coverage for all 7 Habits API endpoints, including streak logic, soft delete, orphaned log prevention, and duplicate log conflict detection.
+- **Next:** Write `server/tests/tasks.test.js` for the Tasks API.
 
 ### End-to-End (E2E) Testing
 

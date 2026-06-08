@@ -31,6 +31,12 @@ This document serves as our knowledge base, tracking issues we encountered durin
 - **The Issue:** Saved files were not formatting automatically in VS Code.
 - **The Resolution:** Added a `.prettierrc` configuration and workspace-level settings inside `.vscode/settings.json` specifying formatting rules, format-on-save activation, and Prettier as the default formatter.
 
+### Docker Database Persistent Volume Initialization Credentials
+
+- **The Issue:** Changing database credentials (`MONGO_INITDB_ROOT_USERNAME` / `MONGO_INITDB_ROOT_PASSWORD`) in the root `.env` had no effect on the running container, causing Express to throw `Authentication failed` when trying to connect.
+- **The Resolution:** Stopped the containers, deleted the local Docker volume using `docker volume rm compass-mongo-data`, and recreated it to trigger a fresh database initialization with the new credentials.
+- **The Lesson:** Stateful Docker containers (like databases) only read initialization credentials on their very first run when their data directory is empty. Once a persistent volume is created, those credentials are baked in and the environment variables are ignored on subsequent restarts. To change credentials locally, the volume must be destroyed and recreated.
+
 ---
 
 ### Backend API Logic

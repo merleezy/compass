@@ -20,4 +20,18 @@ export default defineConfig([
       'no-console': 'off',
     },
   },
+  {
+    files: ['tests/**/*.js', '**/*.test.js'],
+    languageOptions: {
+      globals: {
+        describe: 'readonly',
+        it: 'readonly',
+        expect: 'readonly',
+        beforeAll: 'readonly',
+        beforeEach: 'readonly',
+        afterAll: 'readonly',
+        test: 'readonly',
+      },
+    },
+  },
 ]);

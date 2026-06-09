@@ -41,8 +41,8 @@
   /* Borders & feedback */
   --color-border: #4d5157;
   --color-progress-track: #1a1c1e;
-  --color-error: #ef4444;
-  --color-error-light: #450a0a;
+  --color-error: #f87171;
+  --color-error-light: #521b18;
 
   /* Fonts */
   --font-headline: 'Manrope', sans-serif;

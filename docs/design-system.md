@@ -31,8 +31,8 @@ These custom tokens live in the `@theme` block of `client/src/index.css` and map
 | `--color-primary-dark`   | `bg-primary-dark`   | `#00877a` | Button hover states                      |
 | `--color-primary-light`  | `bg-primary-light`  | `#89f5e7` | Completion badges, full-progress glow    |
 | `--color-border`         | `border-border`     | `#4d5157` | Outlines, borders, unchecked elements    |
-| `--color-error`          | `text-error`        | `#ef4444` | Deletion flags, broken streaks, errors   |
-| `--color-error-light`    | `bg-error-light`    | `#450a0a` | Failure pill backgrounds                 |
+| `--color-error`          | `text-error`        | `#f87171` | Deletion flags, broken streaks, errors   |
+| `--color-error-light`    | `bg-error-light`    | `#521b18` | Failure pill backgrounds                 |
 
 ### Archived Light Theme
 
@@ -76,6 +76,10 @@ Tasks are displayed in grid cards with a thick left-accent border (`border-l-4`)
 - `border-l-teal-500` ── **Due Today**
 - `border-l-amber-500` ── **Upcoming**
 - `border-l-slate-500` ── **Completed**
+
+### Tag Pills
+
+Task tags render as borderless pills next to the due-date badge — only due-date badges carry an outline. Each pill uses a dim background (`bg-{color}-400/15`) with bright text (`text-{color}-300`) and a small leading dot that inherits the text color via `bg-current`. Colors come from a fixed 8-color palette in `client/src/components/features/tasks/tagColors.js`, assigned by a deterministic case-insensitive hash of the tag name so a given tag is always the same color, with nothing stored. Tailwind v4 note: the palette entries are complete literal class strings — never interpolate them.
 
 ### Task Completion 2.5s Delay
 

@@ -1,7 +1,16 @@
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import TaskList from '../components/features/tasks/TaskList';
 import TaskForm from '../components/features/tasks/TaskForm';
 import Modal from '../components/ui/Modal';
+
+// Mirrors the urgency logic in TaskList/DueDateBadge (en-CA gives YYYY-MM-DD)
+function getDueStatus(dueDate) {
+  if (!dueDate) return 'none';
+  const today = new Intl.DateTimeFormat('en-CA').format(new Date());
+  if (dueDate < today) return 'overdue';
+  if (dueDate === today) return 'today';
+  return 'upcoming';
+}
 
 export default function TasksPage() {
   const [tasks, setTasks] = useState([]);
@@ -9,6 +18,8 @@ export default function TasksPage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [showCompleted, setShowCompleted] = useState(false);
   const [pendingComplete, setPendingComplete] = useState(new Set());
+  // tags holds lowercase tag names; dueStatus holds 'overdue' | 'today' | 'upcoming' | 'none'
+  const [filters, setFilters] = useState({ tags: [], dueStatus: [] });
   // Timeout IDs stored in a ref — updating them shouldn't trigger re-renders
   const timeoutsRef = useRef({});
 
@@ -29,12 +40,12 @@ export default function TasksPage() {
     fetchTasks();
   }, [fetchTasks]);
 
-  const handleCreate = async (title, description, dueDate) => {
+  const handleCreate = async (title, description, dueDate, tags = []) => {
     try {
       const res = await fetch(`${import.meta.env.VITE_API_URL}/tasks`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title, description, dueDate }),
+        body: JSON.stringify({ title, description, dueDate, tags }),
       });
 
       // Check if the request was successful
@@ -139,12 +150,14 @@ export default function TasksPage() {
     }
   };
 
-  const handleEdit = async (_id, title, description, dueDate) => {
+  const handleEdit = async (_id, title, description, dueDate, tags = []) => {
     try {
       const res = await fetch(`${import.meta.env.VITE_API_URL}/tasks/${_id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title, description, dueDate }),
+        // tags must be sent explicitly — omitting the key would silently
+        // preserve old tags server-side, making tag removal impossible
+        body: JSON.stringify({ title, description, dueDate, tags }),
       });
 
       if (!res.ok) {
@@ -158,6 +171,32 @@ export default function TasksPage() {
       alert(err.message);
     }
   };
+
+  // Unique tags across all tasks (case-insensitive, first-seen casing wins),
+  // used for input suggestions and the filter panel
+  const allTags = useMemo(() => {
+    const seen = new Map();
+    for (const tag of tasks.flatMap((t) => t.tags ?? [])) {
+      const key = tag.toLowerCase();
+      if (!seen.has(key)) seen.set(key, tag);
+    }
+    return [...seen.values()].sort((a, b) => a.localeCompare(b));
+  }, [tasks]);
+
+  const hasActiveFilters = filters.tags.length > 0 || filters.dueStatus.length > 0;
+
+  // Filter before TaskList so its urgency grouping works untouched
+  const visibleTasks = useMemo(() => {
+    if (!hasActiveFilters) return tasks;
+    return tasks.filter((task) => {
+      const tagMatch =
+        filters.tags.length === 0 ||
+        (task.tags ?? []).some((t) => filters.tags.includes(t.toLowerCase()));
+      const statusMatch =
+        filters.dueStatus.length === 0 || filters.dueStatus.includes(getDueStatus(task.dueDate));
+      return tagMatch && statusMatch;
+    });
+  }, [tasks, filters, hasActiveFilters]);
 
   return (
     <div>
@@ -179,7 +218,7 @@ export default function TasksPage() {
           </div>
         ) : (
           <TaskList
-            tasks={tasks}
+            tasks={visibleTasks}
             pendingComplete={pendingComplete}
             onToggle={handleToggle}
             onDelete={handleDelete}
@@ -187,13 +226,22 @@ export default function TasksPage() {
             showCompleted={showCompleted}
             onToggleCompleted={() => setShowCompleted((s) => !s)}
             onAdd={() => setModalOpen(true)}
+            existingTags={allTags}
+            filters={filters}
+            onFilterChange={setFilters}
+            onClearFilters={() => setFilters({ tags: [], dueStatus: [] })}
+            hasActiveFilters={hasActiveFilters}
           />
         )}
       </div>
 
       {modalOpen && (
         <Modal onClose={() => setModalOpen(false)}>
-          <TaskForm onCreate={handleCreate} onClose={() => setModalOpen(false)} />
+          <TaskForm
+            onCreate={handleCreate}
+            onClose={() => setModalOpen(false)}
+            existingTags={allTags}
+          />
         </Modal>
       )}
     </div>

@@ -1,15 +1,17 @@
 import { useState } from "react";
 import { CirclePlus } from "lucide-react";
 import FormCard from "../../ui/FormCard";
+import TagInput from "./TagInput";
 
-export default function TaskForm({ onCreate, onClose }) {
+export default function TaskForm({ onCreate, onClose, existingTags = [] }) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [dueDate, setDueDate] = useState("");
+  const [tags, setTags] = useState([]);
 
   function handleSubmit() {
     if (!title.trim()) return;
-    onCreate(title.trim(), description.trim(), dueDate || null);
+    onCreate(title.trim(), description.trim(), dueDate || null, tags);
     onClose();
   }
 
@@ -75,6 +77,16 @@ export default function TaskForm({ onCreate, onClose }) {
           onChange={(e) => setDueDate(e.target.value)}
           className={`${inputClass} scheme-dark`}
         />
+      </div>
+
+      <div>
+        <label className="block text-xs font-body font-bold text-text-muted uppercase tracking-wider mb-2">
+          Tags
+          <span className="normal-case tracking-normal ml-1 font-normal">
+            (optional)
+          </span>
+        </label>
+        <TagInput value={tags} onChange={setTags} suggestions={existingTags} />
       </div>
 
       <div className="pt-2">

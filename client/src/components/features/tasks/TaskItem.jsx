@@ -1,6 +1,8 @@
 import { EllipsisVertical, Pencil, Trash2, Check, X } from 'lucide-react'
 import { useState, useRef, useEffect } from 'react'
 import DueDateBadge from './DueDateBadge'
+import TagBadge from './TagBadge'
+import TagInput from './TagInput'
 
 const borderColor = {
   overdue:   'border-error',
@@ -12,14 +14,15 @@ const borderColor = {
 const editInputClass = `w-full bg-surface-subtle border rounded-lg px-3 py-2
                         font-body text-base sm:text-sm outline-none transition-colors`
 
-export default function TaskItem({ task, urgency, onToggle, onDelete, onEdit }) {
-  const { _id, title, description, dueDate, completed } = task
+export default function TaskItem({ task, urgency, onToggle, onDelete, onEdit, existingTags = [] }) {
+  const { _id, title, description, dueDate, completed, tags } = task
 
   const [menuOpen, setMenuOpen]       = useState(false)
   const [isEditing, setIsEditing]     = useState(false)
   const [editedTitle, setEditedTitle] = useState(title)
   const [editedDesc, setEditedDesc]   = useState(description ?? '')
   const [editedDate, setEditedDate]   = useState(dueDate ?? '')
+  const [editedTags, setEditedTags]   = useState(tags ?? [])
 
   const menuRef  = useRef(null)
   const titleRef = useRef(null)
@@ -41,13 +44,14 @@ export default function TaskItem({ task, urgency, onToggle, onDelete, onEdit }) 
     setEditedTitle(title)
     setEditedDesc(description ?? '')
     setEditedDate(dueDate ?? '')
+    setEditedTags(tags ?? [])
     setMenuOpen(false)
     setIsEditing(true)
   }
 
   const handleSave = () => {
     if (!editedTitle.trim()) return
-    onEdit(_id, editedTitle.trim(), editedDesc.trim(), editedDate || null)
+    onEdit(_id, editedTitle.trim(), editedDesc.trim(), editedDate || null, editedTags)
     setIsEditing(false)
   }
 
@@ -55,6 +59,7 @@ export default function TaskItem({ task, urgency, onToggle, onDelete, onEdit }) 
     setEditedTitle(title)
     setEditedDesc(description ?? '')
     setEditedDate(dueDate ?? '')
+    setEditedTags(tags ?? [])
     setIsEditing(false)
   }
 
@@ -90,6 +95,12 @@ export default function TaskItem({ task, urgency, onToggle, onDelete, onEdit }) 
             value={editedDate}
             onChange={e => setEditedDate(e.target.value)}
             className={`${editInputClass} border-border text-text-muted text-base sm:text-xs scheme-dark focus:border-primary/50`}
+          />
+          <TagInput
+            compact
+            value={editedTags}
+            onChange={setEditedTags}
+            suggestions={existingTags}
           />
         </div>
         <div className="flex justify-end gap-2 mt-3">
@@ -148,8 +159,10 @@ export default function TaskItem({ task, urgency, onToggle, onDelete, onEdit }) 
             {description}
           </p>
         )}
-        <div className="mt-2">
-          <DueDateBadge dueDate={dueDate} />
+        <div className={`mt-2 flex flex-wrap items-center gap-1.5 ${completed ? 'opacity-50' : ''}`}>
+          {/* Skip the undated em dash when tags can fill the row instead */}
+          {(dueDate || !tags?.length) && <DueDateBadge dueDate={dueDate} />}
+          {(tags ?? []).map(tag => <TagBadge key={tag} tag={tag} />)}
         </div>
       </div>
 

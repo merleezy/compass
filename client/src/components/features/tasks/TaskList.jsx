@@ -1,5 +1,6 @@
 import { ChevronDown, ChevronRight } from 'lucide-react'
 import TaskItem from './TaskItem'
+import TaskFilter from './TaskFilter'
 import ListCard from '../../ui/ListCard'
 
 function getToday() {
@@ -50,6 +51,7 @@ export default function TaskList({
   tasks, pendingComplete,
   onToggle, onDelete, onEdit,
   showCompleted, onToggleCompleted, onAdd,
+  existingTags, filters, onFilterChange, onClearFilters, hasActiveFilters,
 }) {
   const today = getToday()
 
@@ -71,25 +73,48 @@ export default function TaskList({
   const isEmpty = !hasActiveTasks && completed.length === 0
 
   const actions = (
-    <button
-      onClick={onAdd}
-      className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg
-                 bg-primary text-white text-xs font-headline font-bold
-                 hover:bg-primary-dark transition-colors
-                 shadow-[0_2px_8px_rgba(0,106,97,0.35)]"
-    >
-      + New Task
-    </button>
+    <div className="flex items-center gap-2">
+      <TaskFilter
+        allTags={existingTags}
+        filters={filters}
+        onChange={onFilterChange}
+        onClear={onClearFilters}
+      />
+      <button
+        onClick={onAdd}
+        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg
+                   bg-primary text-white text-xs font-headline font-bold
+                   hover:bg-primary-dark transition-colors
+                   shadow-[0_2px_8px_rgba(0,106,97,0.35)]"
+      >
+        + New Task
+      </button>
+    </div>
   )
 
   return (
     <ListCard title="Your Tasks" actions={actions}>
       {isEmpty ? (
         <div className="py-12 text-center">
-          <p className="text-sm font-body text-text-muted">No tasks yet.</p>
-          <p className="text-xs font-body text-text-muted/50 mt-1">
-            Click "+ New Task" to add one.
-          </p>
+          {hasActiveFilters ? (
+            <>
+              <p className="text-sm font-body text-text-muted">No tasks match your filters.</p>
+              <button
+                onClick={onClearFilters}
+                className="text-xs font-body text-primary hover:text-primary-light
+                           transition-colors mt-1"
+              >
+                Clear filters
+              </button>
+            </>
+          ) : (
+            <>
+              <p className="text-sm font-body text-text-muted">No tasks yet.</p>
+              <p className="text-xs font-body text-text-muted/50 mt-1">
+                Click "+ New Task" to add one.
+              </p>
+            </>
+          )}
         </div>
       ) : (
         <div className="p-4 space-y-6">
@@ -100,7 +125,8 @@ export default function TaskList({
               <div className="space-y-2">
                 {overdue.map(task => (
                   <TaskItem key={task._id} task={task} urgency="overdue"
-                    onToggle={onToggle} onDelete={onDelete} onEdit={onEdit} />
+                    onToggle={onToggle} onDelete={onDelete} onEdit={onEdit}
+                    existingTags={existingTags} />
                 ))}
               </div>
             </div>
@@ -112,7 +138,8 @@ export default function TaskList({
               <div className="space-y-2">
                 {dueToday.map(task => (
                   <TaskItem key={task._id} task={task} urgency="today"
-                    onToggle={onToggle} onDelete={onDelete} onEdit={onEdit} />
+                    onToggle={onToggle} onDelete={onDelete} onEdit={onEdit}
+                    existingTags={existingTags} />
                 ))}
               </div>
             </div>
@@ -124,7 +151,8 @@ export default function TaskList({
               <div className="space-y-2">
                 {upcoming.map(task => (
                   <TaskItem key={task._id} task={task} urgency="upcoming"
-                    onToggle={onToggle} onDelete={onDelete} onEdit={onEdit} />
+                    onToggle={onToggle} onDelete={onDelete} onEdit={onEdit}
+                    existingTags={existingTags} />
                 ))}
               </div>
             </div>
@@ -141,7 +169,8 @@ export default function TaskList({
                 <div className="space-y-2 mt-3">
                   {completed.map(task => (
                     <TaskItem key={task._id} task={task} urgency="completed"
-                      onToggle={onToggle} onDelete={onDelete} onEdit={onEdit} />
+                      onToggle={onToggle} onDelete={onDelete} onEdit={onEdit}
+                    existingTags={existingTags} />
                   ))}
                 </div>
               )}

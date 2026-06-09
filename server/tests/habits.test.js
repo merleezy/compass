@@ -17,6 +17,10 @@ const subtractDays = (dateStr, days) => {
 const today = getTodayString();
 const yesterday = subtractDays(today, 1);
 
+// A malformed id — not a valid ObjectId at all, so the middleware must
+// reject it with 400 before Mongoose ever sees it
+const invalidId = 'abc';
+
 describe('Habits API', () => {
   // Happy path: creating a habit
   describe('POST /api/habits', () => {
@@ -144,6 +148,13 @@ describe('Habits API', () => {
       const orphanedLog = await HabitLog.findOne({ habitId: fakeId });
       expect(orphanedLog).toBeNull();
     });
+
+    // Sad path: a malformed ObjectId must be a 400 (client error), not a 500
+    it('should return 400 for a malformed habit id', async () => {
+      const res = await request(app).post(`/api/habits/${invalidId}/log`);
+      expect(res.statusCode).toBe(400);
+      expect(res.body).toHaveProperty('error', 'Invalid id format');
+    });
   });
 
   describe('DELETE /api/habits/:id', () => {
@@ -173,6 +184,13 @@ describe('Habits API', () => {
       const res = await request(app).delete(`/api/habits/${fakeId}`);
       expect(res.statusCode).toBe(404);
       expect(res.body).toHaveProperty('error', 'Habit not found');
+    });
+
+    // Sad path: a malformed ObjectId must be a 400 (client error), not a 500
+    it('should return 400 for a malformed habit id', async () => {
+      const res = await request(app).delete(`/api/habits/${invalidId}`);
+      expect(res.statusCode).toBe(400);
+      expect(res.body).toHaveProperty('error', 'Invalid id format');
     });
   });
 
@@ -209,6 +227,13 @@ describe('Habits API', () => {
       expect(res.statusCode).toBe(404);
       expect(res.body).toHaveProperty('error', 'Habit not found');
     });
+
+    // Sad path: a malformed ObjectId must be a 400 (client error), not a 500
+    it('should return 400 for a malformed habit id', async () => {
+      const res = await request(app).delete(`/api/habits/${invalidId}/log`);
+      expect(res.statusCode).toBe(400);
+      expect(res.body).toHaveProperty('error', 'Invalid id format');
+    });
   });
 
   describe('PUT /api/habits/:id', () => {
@@ -233,6 +258,13 @@ describe('Habits API', () => {
 
       expect(res.statusCode).toBe(404);
       expect(res.body).toHaveProperty('error', 'Habit not found');
+    });
+
+    // Sad path: a malformed ObjectId must be a 400 (client error), not a 500
+    it('should return 400 for a malformed habit id', async () => {
+      const res = await request(app).put(`/api/habits/${invalidId}`).send({ name: 'Anything' });
+      expect(res.statusCode).toBe(400);
+      expect(res.body).toHaveProperty('error', 'Invalid id format');
     });
 
     // Sad path: name is required — the controller validates before touching the DB

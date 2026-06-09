@@ -7,13 +7,14 @@ const {
   completeTask,
   uncompleteTask,
 } = require('../controllers/taskController');
+const validateObjectId = require('../middleware/validateObjectId');
 const router = express.Router();
 
 router.get('/', getTasks);
 router.post('/', createTask);
-router.patch('/:id', editTask);
-router.delete('/:id', deleteTask);
-router.patch('/:id/complete', completeTask);
-router.patch('/:id/uncomplete', uncompleteTask);
+router.patch('/:id', validateObjectId, editTask);
+router.delete('/:id', validateObjectId, deleteTask);
+router.patch('/:id/complete', validateObjectId, completeTask);
+router.patch('/:id/uncomplete', validateObjectId, uncompleteTask);
 
 module.exports = router;

@@ -9,12 +9,13 @@ const {
   editHabit,
   deleteHabit,
 } = require("../controllers/habitController");
+const validateObjectId = require("../middleware/validateObjectId");
 
 router.get("/today", getHabitsToday);
 router.get("/", getHabits);
 router.post("/", createHabit);
-router.post("/:id/log", logHabit);
-router.delete("/:id/log", unlogHabit);
-router.put("/:id", editHabit);
-router.delete("/:id", deleteHabit);
+router.post("/:id/log", validateObjectId, logHabit);
+router.delete("/:id/log", validateObjectId, unlogHabit);
+router.put("/:id", validateObjectId, editHabit);
+router.delete("/:id", validateObjectId, deleteHabit);
 module.exports = router;

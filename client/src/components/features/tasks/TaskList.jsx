@@ -11,6 +11,7 @@ const sectionLabelColor = {
   overdue:   'text-error',
   today:     'text-primary',
   upcoming:  'text-amber-400',
+  none:      'text-text-muted',
   completed: 'text-text-muted',
 }
 
@@ -59,17 +60,15 @@ export default function TaskList({
 
   const overdue  = tasks.filter(t => !isEffectivelyComplete(t) && t.dueDate && t.dueDate < today)
   const dueToday = tasks.filter(t => !isEffectivelyComplete(t) && t.dueDate === today)
+  // Undated tasks get their own section so the grouping matches the filter's
+  // "No due date" category instead of hiding inside Upcoming
   const upcoming = tasks
-    .filter(t => !isEffectivelyComplete(t) && (!t.dueDate || t.dueDate > today))
-    .sort((a, b) => {
-      if (!a.dueDate && !b.dueDate) return 0
-      if (!a.dueDate) return 1
-      if (!b.dueDate) return -1
-      return a.dueDate.localeCompare(b.dueDate)
-    })
+    .filter(t => !isEffectivelyComplete(t) && t.dueDate && t.dueDate > today)
+    .sort((a, b) => a.dueDate.localeCompare(b.dueDate))
+  const noDueDate = tasks.filter(t => !isEffectivelyComplete(t) && !t.dueDate)
   const completed = tasks.filter(t => isEffectivelyComplete(t))
 
-  const hasActiveTasks = overdue.length + dueToday.length + upcoming.length > 0
+  const hasActiveTasks = overdue.length + dueToday.length + upcoming.length + noDueDate.length > 0
   const isEmpty = !hasActiveTasks && completed.length === 0
 
   const actions = (
@@ -151,6 +150,19 @@ export default function TaskList({
               <div className="space-y-2">
                 {upcoming.map(task => (
                   <TaskItem key={task._id} task={task} urgency="upcoming"
+                    onToggle={onToggle} onDelete={onDelete} onEdit={onEdit}
+                    existingTags={existingTags} />
+                ))}
+              </div>
+            </div>
+          )}
+
+          {noDueDate.length > 0 && (
+            <div>
+              <SectionHeader label="No Due Date" count={noDueDate.length} urgency="none" />
+              <div className="space-y-2">
+                {noDueDate.map(task => (
+                  <TaskItem key={task._id} task={task} urgency="none"
                     onToggle={onToggle} onDelete={onDelete} onEdit={onEdit}
                     existingTags={existingTags} />
                 ))}

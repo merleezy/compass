@@ -52,11 +52,13 @@ export default function DueDateBadge({ dueDate }) {
     );
   }
 
-  // upcoming — show the formatted date
+  // upcoming — show the formatted date. No background: bg-surface-subtle
+  // matched the card at rest but ghosted into view on card hover, so the
+  // text sits directly on the card instead (padding kept for row alignment)
   return (
     <span
-      className="inline-flex items-center px-2.5 py-1 rounded-full
-                     bg-surface-subtle text-text-muted
+      className="inline-flex items-center py-1
+                     text-text-muted
                      text-[10px] font-body font-bold uppercase tracking-wide"
     >
       {formatDate(dueDate)}

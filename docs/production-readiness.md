@@ -139,7 +139,7 @@ Focuses on moving from local execution to standard production environments.
   - `server/vitest.config.js` — Configures the setup file and enables Vitest globals (`describe`, `it`, `expect`) to avoid CommonJS/ESM import conflicts.
   - `server/tests/health.test.js` — Verifies the health check endpoint returns 200.
   - `server/tests/habits.test.js` — Full happy & sad path coverage for all 7 Habits API endpoints, including streak logic, soft delete, orphaned log prevention, and duplicate log conflict detection.
-- **Next:** Write `server/tests/tasks.test.js` for the Tasks API.
+  - `server/tests/tasks.test.js` — Full happy & sad path coverage for all 6 Tasks API endpoints, verifying complete/uncomplete actions, hard-delete permanence, and ID format validation.
 
 ### End-to-End (E2E) Testing
 

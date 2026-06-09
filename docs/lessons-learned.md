@@ -52,6 +52,12 @@ This document serves as our knowledge base, tracking issues we encountered durin
 - **The Issue:** Backend routes listened for `POST /api/tasks/:id/complete` but the frontend sent a `PATCH` request, returning a `404 Not Found` error.
 - **The Resolution:** Changed the Express router endpoints to use `.patch` to align with REST semantics and client requests.
 
+### Preventing Orphaned Documents by Validating Existence Before DB Creation
+
+- **The Issue:** In the habit logging endpoint (`POST /api/habits/:id/log`), calling the endpoint with a non-existent habit ID returned a 404 error as expected, but it still created an orphaned log entry in the `HabitLog` collection because the database insertion occurred before validating if the parent habit existed.
+- **The Resolution:** Relocated the `Habit.findById(id)` check to run *before* executing `HabitLog.create()`.
+- **The Lesson:** Always perform validation checks (especially verifying parent document existence in one-to-many relationships) before committing any mutations to the database. If write operations occur before existence validations, failed requests will leave orphaned data that pollutes the database and degrades data integrity.
+
 ---
 
 ### Frontend React Logic

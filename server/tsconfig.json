@@ -1,0 +1,39 @@
+{
+  "compilerOptions": {
+    // Output a modern JS feature set — Node 18+ supports all of ES2022.
+    "target": "ES2022",
+    "lib": ["ES2022"],
+
+    // Your project is CommonJS (require/module.exports), so we keep emitting
+    // that module format. This is what lets a .ts model interop cleanly with
+    // the .js files that still `require()` it during the migration.
+    "module": "node16",
+    "moduleResolution": "node16",
+
+    // Lets `import x from 'cjs-package'` work against CommonJS packages like
+    // express/mongoose without the awkward `import * as x` form.
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "forceConsistentCasingInFileNames": true,
+
+    // The whole point of the migration: turn on all the safety checks.
+    // (noImplicitAny, strictNullChecks, etc. all flip on together.)
+    "strict": true,
+
+    // Don't type-check inside node_modules — trust the libraries' own types.
+    // Keeps error output focused on YOUR code.
+    "skipLibCheck": true,
+
+    // Migration bridge: allow .js and .ts to live side by side...
+    "allowJs": true,
+    // ...but don't type-check the .js files yet, or you'd drown in errors
+    // on day one. We convert file by file, opting each into strictness.
+    "checkJs": false,
+
+    // tsx (dev) and vitest (tests) do the actual transpiling, so the compiler
+    // is only used here as a type-checker (`npm run typecheck`), not to emit.
+    // A real `tsc` build step comes later, before any deploy.
+    "noEmit": true
+  },
+  "include": ["src", "tests", "server.js"]
+}

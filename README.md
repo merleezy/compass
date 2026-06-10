@@ -1,6 +1,6 @@
 # Compass
 
-A personal life dashboard for tracking habits, goals, reflections, and financial progress. Built as a portfolio project while learning full-stack development.
+A personal life dashboard for tracking habits, tasks, goals, and reflections. Built as a portfolio project while learning full-stack development.
 
 **Live demo:** https://compass-seven-psi.vercel.app/habits
 
@@ -13,11 +13,15 @@ A personal life dashboard for tracking habits, goals, reflections, and financial
 | Layer    | Technology                          |
 | -------- | ----------------------------------- |
 | Frontend | React + Vite                        |
+| Routing  | React Router DOM                    |
 | Styling  | Tailwind CSS v4                     |
 | Backend  | Node.js + Express                   |
 | Database | MongoDB (Docker Local / Atlas Prod) |
+| Testing  | Vitest + Supertest                  |
 | Charts   | Recharts                            |
 | Icons    | Lucide React                        |
+
+> 🚧 The codebase is being progressively migrated from JavaScript to TypeScript — see [docs/typescript-migration.md](docs/typescript-migration.md).
 
 ---
 
@@ -81,6 +85,15 @@ cd client && npm run dev
 
 Frontend: http://localhost:5173
 
+### Tests
+
+The backend has an integration test suite (happy and sad paths for every API endpoint). The local MongoDB container must be running:
+
+```bash
+cd server && npm test        # run the test suite
+cd server && npm run typecheck   # TypeScript type-checking
+```
+
 ---
 
 ## Features
@@ -88,8 +101,22 @@ Frontend: http://localhost:5173
 - **Habit Tracking** — Create, complete, edit, and delete daily habits
 - **Streak Counter** — 3-state streak badge (no streak / at-risk / maintained)
 - **Progress Bar** — Visual daily completion progress
+- **Task Management** — Tasks with descriptions, due dates, and tags, filterable by tag and due status
 - **Responsive Design** — Collapsible sidebar, mobile-friendly drawer
 - **Timezone-Aware Resets** — Habits reset at local midnight, not UTC
+
+---
+
+## Documentation
+
+Detailed docs live in [`docs/`](docs/):
+
+- [Local Development Setup](docs/running-locally.md)
+- [Architecture & API Reference](docs/architecture.md)
+- [Design System & UI Components](docs/design-system.md)
+- [Roadmap & Status](docs/roadmap.md)
+- [Production Readiness Guide](docs/production-readiness.md)
+- [TypeScript Migration Status](docs/typescript-migration.md)
 
 ---
 
@@ -98,7 +125,9 @@ Frontend: http://localhost:5173
 - [x] Habit tracking with streaks
 - [x] Responsive layout (mobile + desktop)
 - [x] MongoDB Atlas + Vercel deployment
-- [ ] Task list
+- [x] Task list with tags, due dates, and due-status filtering
+- [x] Backend integration test suite
+- [ ] TypeScript migration (in progress)
 - [ ] Daily reflections with rating history
 - [ ] Goal tracking (milestone + metric types)
 - [ ] Calendar planner

@@ -21,7 +21,7 @@ A personal life dashboard for tracking habits, tasks, goals, and reflections. Bu
 | Charts   | Recharts                            |
 | Icons    | Lucide React                        |
 
-> 🚧 The codebase is being progressively migrated from JavaScript to TypeScript — see [docs/typescript-migration.md](docs/typescript-migration.md).
+> The codebase is being progressively migrated from JavaScript to TypeScript — see [docs/typescript-migration.md](docs/typescript-migration.md).
 
 ---
 

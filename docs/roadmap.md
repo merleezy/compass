@@ -12,9 +12,11 @@ This document tracks the current state of Compass features and outlines our plan
 - [x] Habits model, controller, and route persistence complete
 - [x] Habit UI cards (lists, create modal, streak badges, timezone resets)
 - [x] Task model, controller, and routes persistent in database
-- [x] Task UI cards (urgency grouping, 2.5s completion delays, toggle filter)
-- [x] ESLint & Prettier code quality checking fully configured for both frontend and backend
+- [x] Task UI cards (urgency grouping, 2.5s completion delays, tag + due-status filtering)
+- [x] ESLint configured for both frontend and backend (Prettier via editor format-on-save)
+- [x] Backend integration test suite (Vitest + Supertest, happy + sad paths)
 - [x] Sub-dependency security audit checked (0 vulnerabilities)
+- [~] TypeScript migration underway — see [typescript-migration.md](./typescript-migration.md)
 
 ---
 
@@ -54,9 +56,9 @@ This document tracks the current state of Compass features and outlines our plan
 
 #### Task Tagging & Metadata
 
-- Add custom tags (e.g., "Work", "Personal") to tasks.
-- Add task time estimates.
-- Filter lists by active tags.
+- [x] Add custom tags (e.g., "Work", "Personal") to tasks.
+- [x] Filter lists by active tags.
+- [ ] Add task time estimates.
 
 #### Weekly Calendar Planner
 

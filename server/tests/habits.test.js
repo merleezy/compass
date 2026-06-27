@@ -17,6 +17,9 @@ const subtractDays = (dateStr, days) => {
 const today = getTodayString();
 const yesterday = subtractDays(today, 1);
 
+// A syntactically valid ObjectId that will never match a real document
+const fakeId = '000000000000000000000000';
+
 // A malformed id — not a valid ObjectId at all, so the middleware must
 // reject it with 400 before Mongoose ever sees it
 const invalidId = 'abc';
@@ -140,7 +143,6 @@ describe('Habits API', () => {
 
     // Sad path: the habit existence check must happen BEFORE creating the log
     it('should return 404 and not create an orphaned HabitLog for a non-existent habit', async () => {
-      const fakeId = '000000000000000000000000';
       const res = await request(app).post(`/api/habits/${fakeId}/log`);
       expect(res.statusCode).toBe(404);
       expect(res.body).toHaveProperty('error', 'Habit not found');
@@ -180,7 +182,6 @@ describe('Habits API', () => {
 
     // Sad path: deleting a habit that does not exist
     it('should return 404 for a non-existent habit', async () => {
-      const fakeId = '000000000000000000000000';
       const res = await request(app).delete(`/api/habits/${fakeId}`);
       expect(res.statusCode).toBe(404);
       expect(res.body).toHaveProperty('error', 'Habit not found');
@@ -222,7 +223,6 @@ describe('Habits API', () => {
 
     // Sad path: the habit itself does not exist
     it('should return 404 if the habit does not exist', async () => {
-      const fakeId = '000000000000000000000000';
       const res = await request(app).delete(`/api/habits/${fakeId}/log`);
       expect(res.statusCode).toBe(404);
       expect(res.body).toHaveProperty('error', 'Habit not found');
@@ -253,7 +253,6 @@ describe('Habits API', () => {
 
     // Sad path: the habit does not exist
     it('should return 404 for a non-existent habit', async () => {
-      const fakeId = '000000000000000000000000';
       const res = await request(app).put(`/api/habits/${fakeId}`).send({ name: 'Anything' });
 
       expect(res.statusCode).toBe(404);

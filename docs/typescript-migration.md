@@ -29,7 +29,8 @@ strip types and run the code _without verifying them_ (a speed trade-off). Only
 - [x] Server toolchain set up (`tsx`, `typescript`, `@types/node`, `tsconfig.json`)
 - [x] `npm run typecheck` script added
 - [x] `server/src/models/HabitLog.ts` converted
-- [ ] `server/src/models/Task.ts`, `Habit.ts`
+- [x] `server/src/models/Habit.ts` converted
+- [ ] `server/src/models/Task.ts`
 - [ ] Server `db.js`, `app.js`, `server.js`
 - [ ] Server controllers, routes, middleware
 - [ ] Server tests

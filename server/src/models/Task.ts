@@ -1,6 +1,16 @@
-const mongoose = require('mongoose');
+import mongoose, { Schema } from 'mongoose';
 
-const taskSchema = new mongoose.Schema(
+interface ITask {
+  title: string;
+  description: string;
+  dueDate: string | null;
+  completed: boolean;
+  tags: string[];
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+const taskSchema = new Schema<ITask>(
   {
     title: {
       type: String,
@@ -32,4 +42,4 @@ const taskSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
-module.exports = mongoose.model('Task', taskSchema);
+export = mongoose.model<ITask>('Task', taskSchema);

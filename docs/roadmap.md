@@ -16,7 +16,8 @@ This document tracks the current state of Compass features and outlines our plan
 - [x] ESLint configured for both frontend and backend (Prettier via editor format-on-save)
 - [x] Backend integration test suite (Vitest + Supertest, happy + sad paths)
 - [x] Sub-dependency security audit checked (0 vulnerabilities)
-- [~] TypeScript migration underway — see [typescript-migration.md](./typescript-migration.md)
+- [x] TypeScript migration complete (server + client, native ESM) — see [typescript-migration.md](./typescript-migration.md)
+- [x] GitHub Actions CI (typecheck, lint, test, build on every PR)
 
 ---
 

@@ -6,22 +6,26 @@ A personal life dashboard for tracking habits, tasks, goals, and reflections. Bu
 
 ![Habits Page](docs/demo-images/habits-page.png)
 
+[![CI](https://github.com/merleezy/compass/actions/workflows/ci.yml/badge.svg)](https://github.com/merleezy/compass/actions/workflows/ci.yml)
+
 ---
 
 ## Tech Stack
 
 | Layer    | Technology                          |
 | -------- | ----------------------------------- |
+| Language | TypeScript (server + client)        |
 | Frontend | React + Vite                        |
 | Routing  | React Router DOM                    |
 | Styling  | Tailwind CSS v4                     |
 | Backend  | Node.js + Express                   |
 | Database | MongoDB (Docker Local / Atlas Prod) |
 | Testing  | Vitest + Supertest                  |
+| CI       | GitHub Actions                      |
 | Charts   | Recharts                            |
 | Icons    | Lucide React                        |
 
-> The codebase is being progressively migrated from JavaScript to TypeScript — see [docs/typescript-migration.md](docs/typescript-migration.md).
+> The codebase is fully TypeScript and native ESM — see [docs/typescript-migration.md](docs/typescript-migration.md) for the migration writeup.
 
 ---
 
@@ -90,9 +94,12 @@ Frontend: http://localhost:5173
 The backend has an integration test suite (happy and sad paths for every API endpoint). The local MongoDB container must be running:
 
 ```bash
-cd server && npm test        # run the test suite
-cd server && npm run typecheck   # TypeScript type-checking
+cd server && npm test             # run the test suite
+cd server && npm run typecheck    # TypeScript type-checking
+cd client && npm run typecheck    # TypeScript type-checking (client)
 ```
+
+The same checks (plus `lint` and `build` for both packages) run automatically in CI on every pull request — see [`.github/workflows/ci.yml`](.github/workflows/ci.yml).
 
 ---
 
@@ -127,7 +134,8 @@ Detailed docs live in [`docs/`](docs/):
 - [x] MongoDB Atlas + Vercel deployment
 - [x] Task list with tags, due dates, and due-status filtering
 - [x] Backend integration test suite
-- [ ] TypeScript migration (in progress)
+- [x] Full TypeScript migration (server + client) and ESM conversion
+- [x] GitHub Actions CI (typecheck, lint, test, build on every PR)
 - [ ] Daily reflections with rating history
 - [ ] Goal tracking (milestone + metric types)
 - [ ] Calendar planner

@@ -114,3 +114,19 @@ npm run dev
 ```
 
 - **Frontend Local URL:** `http://localhost:5173`
+
+---
+
+## Continuous Integration
+
+Every pull request and push to `main` runs [`.github/workflows/ci.yml`](../.github/workflows/ci.yml), which mirrors what you'd run locally before committing:
+
+```bash
+# server
+cd server && npm run typecheck && npm run lint && npm test && npm run build
+
+# client
+cd client && npm run typecheck && npm run lint && npm run build
+```
+
+The server job spins up a `mongodb:8.2.3` service container in CI so the test suite has a real database to talk to, matching what Docker Compose provides locally.

@@ -11,6 +11,7 @@ This document serves as our knowledge base, tracking issues we encountered durin
 - **The Issue:** When setting up ESLint on our backend (which uses `"type": "commonjs"`), running ESLint crashed Node with `SyntaxError: Cannot use import statement outside a module` when reading `eslint.config.js`.
 - **The Resolution:** Renamed the configuration file to `eslint.config.mjs`.
 - **The Lesson:** The `.mjs` extension stands for **Modular JavaScript**. It tells the Node.js runtime: _"Force-parse this specific file as an ES Module (allowing `import`/`export`), regardless of what `"type"` is declared in the directory's `package.json`."_
+- **Update (post-migration):** The server's `package.json` now declares `"type": "module"` (see [typescript-migration.md](./typescript-migration.md)), so every `.js` file is already parsed as ESM project-wide. The `.mjs` workaround is no longer load-bearing; `eslint.config.mjs` keeps the extension for historical clarity, not necessity.
 
 ### Unused Caught Error Variables
 

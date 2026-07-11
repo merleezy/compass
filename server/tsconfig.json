@@ -4,11 +4,11 @@
     "target": "ES2022",
     "lib": ["ES2022"],
 
-    // Your project is CommonJS (require/module.exports), so we keep emitting
-    // that module format. This is what lets a .ts model interop cleanly with
-    // the .js files that still `require()` it during the migration.
-    "module": "node16",
-    "moduleResolution": "node16",
+    // The server is now native ESM ("type": "module" in package.json).
+    // NodeNext makes tsc resolve modules exactly the way Node itself does,
+    // including requiring explicit ".js" extensions on relative imports.
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
 
     // Lets `import x from 'cjs-package'` work against CommonJS packages like
     // express/mongoose without the awkward `import * as x` form.
@@ -24,16 +24,10 @@
     // Keeps error output focused on YOUR code.
     "skipLibCheck": true,
 
-    // Migration bridge: allow .js and .ts to live side by side...
-    "allowJs": true,
-    // ...but don't type-check the .js files yet, or you'd drown in errors
-    // on day one. We convert file by file, opting each into strictness.
-    "checkJs": false,
-
-    // tsx (dev) and vitest (tests) do the actual transpiling, so the compiler
-    // is only used here as a type-checker (`npm run typecheck`), not to emit.
-    // A real `tsc` build step comes later, before any deploy.
+    // tsx (dev) and vitest (tests) do the actual transpiling, so this config
+    // is only used as a type-checker (`npm run typecheck`), not to emit.
+    // The production build uses tsconfig.build.json instead.
     "noEmit": true
   },
-  "include": ["src", "tests", "server.js"]
+  "include": ["src", "tests", "vitest.config.ts"]
 }

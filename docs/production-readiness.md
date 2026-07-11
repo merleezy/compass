@@ -121,7 +121,7 @@ Focuses on moving from local execution to standard production environments.
 ### Component Abstraction & Reusable Hooks
 
 - **Concept:** Extracting business logic from presentational components into custom React hooks (e.g., `useHabits`).
-- **Compass Application:** Moving data loading and state manipulation out of `HabitsPage.jsx` into hooks.
+- **Compass Application:** Moving data loading and state manipulation out of `HabitsPage.tsx` into hooks.
 
 ### Accessibility (a11y)
 
@@ -197,7 +197,7 @@ Focuses on moving from local execution to standard production environments.
 ### Compiled TypeScript in Production
 
 - **Concept:** Production servers should run plain compiled JavaScript, not transpile TypeScript on the fly.
-- **Compass Application:** `npm start` currently runs through `tsx` (fine for dev). Before deploying, add a `build` script (`tsc` emitting to `dist/`) and change `start` to `node dist/server.js` — in Docker terms, `tsc` runs in the build stage and only `dist/` ships in the final image. Tracked in [typescript-migration.md](./typescript-migration.md), section C.
+- **Compass Application:** Done — `npm run build` compiles via `tsconfig.build.json` into `dist/`, and `npm start` runs `node dist/server.js`. In Docker terms, `tsc` runs in the build stage and only `dist/` ships in the final image.
 - **Why it matters:** Faster cold starts, no dev-tooling dependency in the production image, and the build step doubles as a final full typecheck before release.
 
 ### Health Checks

@@ -1,0 +1,13 @@
+{
+  // Production build config: same rules as tsconfig.json, but actually emits
+  // JS into dist/ and compiles only src (tests never ship to production).
+  // `npm run build` → dist/, `npm start` → node dist/server.js.
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "outDir": "dist",
+    "rootDir": "src",
+    "sourceMap": true
+  },
+  "include": ["src"]
+}

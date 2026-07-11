@@ -37,8 +37,8 @@ To make the codebase maintainable and production-ready, our detailed project spe
   - Development bugs squashed, ESM configurations, optional catch bindings, and browser engine gotchas.
 - **[Production Readiness Guide](file:///home/isaac/Code/compass/docs/production-readiness.md)**
   - Standards and checklists for backend reliability, security hardening, database indexing, testing suites, and devops processes.
-- **[TypeScript Migration — Status & Cleanup](file:///home/isaac/Code/compass/docs/typescript-migration.md)**
-  - In-progress JS→TS migration: how the toolchain works, conversion status, and the checklist of temporary bridges to remove once it's complete.
+- **[TypeScript Migration — Complete](file:///home/isaac/Code/compass/docs/typescript-migration.md)**
+  - The JS→TS migration finished 2026-07-10 (full codebase on TS + ESM). Documents the final toolchain, what changed, and the TS concepts introduced.
 
 ---
 

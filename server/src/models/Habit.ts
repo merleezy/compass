@@ -1,15 +1,5 @@
 import mongoose, { Schema } from 'mongoose';
-
-interface IHabit {
-  name: string;
-  description: string;
-  isActive: boolean;
-  longestStreak: number;
-  currentStreak: number;
-  lastLoggedDate: string | null;
-  createdAt: Date;
-  updatedAt: Date;
-}
+import type { IHabit } from '../types/models.js';
 
 const habitSchema = new Schema<IHabit>(
   {
@@ -50,4 +40,4 @@ const habitSchema = new Schema<IHabit>(
   },
 );
 
-export = mongoose.model<IHabit>('Habit', habitSchema);
+export default mongoose.model<IHabit>('Habit', habitSchema);

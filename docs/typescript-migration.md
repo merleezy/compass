@@ -1,105 +1,88 @@
-# TypeScript Migration — Status & Cleanup Checklist
+# TypeScript Migration - Complete
 
-This document tracks the in-progress migration of the codebase from JavaScript to
-TypeScript. It exists so the temporary bridges and shortcuts we take during the
-migration get removed at the end instead of quietly becoming permanent tech debt.
-
-The migration is **gradual**: `.js` and `.ts` files coexist (enabled by
-`allowJs` in `tsconfig.json`) and we convert one file at a time, keeping the test
-suite green at every step.
+The JS-to-TS migration finished on 2026-07-10.
+Every source file on both the server and the client is now TypeScript, both packages are native ESM, and all the temporary bridges from the gradual migration have been removed.
+This document is now a record of the final toolchain plus the concepts the migration introduced.
 
 ---
 
-## How the toolchain works
+## Final toolchain
 
-| Tool                  | Role                                                              |
-| --------------------- | ---------------------------------------------------------------- |
-| `tsx`                 | **Runs** TS — transpiles on the fly. Used by `dev`/`start`.      |
-| `vitest`              | **Runs** the tests (transpiles TS via esbuild).                  |
-| `tsc --noEmit`        | **Type-checks** the project. This is `npm run typecheck`.        |
+### Server (`server/`)
 
-Key idea: **transpiling and type-checking are different jobs.** `tsx` and Vitest
-strip types and run the code _without verifying them_ (a speed trade-off). Only
-`npm run typecheck` actually validates types. Run it before committing.
+| Tool / file            | Role                                                                    |
+| ---------------------- | ----------------------------------------------------------------------- |
+| `tsx`                  | **Runs** TS in dev (`npm run dev` = `tsx watch src/server.ts`).         |
+| `vitest`               | **Runs** the tests (`npm test`); transpiles TS itself, no loader hook.  |
+| `tsc` + tsconfig.json  | **Type-checks** only (`npm run typecheck`); `noEmit` is on.             |
+| tsconfig.build.json    | **Builds** for production (`npm run build` emits `dist/`).              |
+| `node dist/server.js`  | **Production start** (`npm start`); no TS tooling at runtime.           |
 
----
+Key idea: transpiling and type-checking are different jobs.
+`tsx` and Vitest strip types without verifying them (a speed trade-off), so only `npm run typecheck` or `npm run build` actually validates types.
+Run one of them before committing.
 
-## Status
+### Client (`client/`)
 
-- [x] Server toolchain set up (`tsx`, `typescript`, `@types/node`, `tsconfig.json`)
-- [x] `npm run typecheck` script added
-- [x] `server/src/models/HabitLog.ts` converted
-- [x] `server/src/models/Habit.ts` converted
-- [ ] `server/src/models/Task.ts`
-- [ ] Server `db.js`, `app.js`, `server.js`
-- [ ] Server controllers, routes, middleware
-- [ ] Server tests
-- [ ] Client (`.jsx` → `.tsx`)
+| Tool / file        | Role                                                                            |
+| ------------------ | ------------------------------------------------------------------------------- |
+| Vite + esbuild     | Transpiles `.tsx` in dev and prod; never type-checks.                          |
+| `tsc -b`           | Type-checks (`npm run typecheck`); also runs first in `npm run build`.         |
+| tsconfig.json      | Solution-style root that references the two real configs below.                |
+| tsconfig.app.json  | Browser code (`src/`): DOM libs, `jsx: react-jsx`, `moduleResolution: bundler`. |
+| tsconfig.node.json | Node-side code (`vite.config.ts` only): no DOM libs.                           |
 
----
-
-## Cleanup checklist (do these when the relevant milestone is reached)
-
-### A. Once **all server source files** are `.ts`
-
-- [ ] **Swap `export =` → `export default` in the models.** We use `export =`
-      (CommonJS-style export) so the remaining `.js` files can `require()` the
-      models without a `.default` unwrap. Once nothing uses `require` on them,
-      `export default` is the cleaner, standard form. See `models/HabitLog.ts`.
-- [ ] **Extract shared model interfaces.** The `IHabitLog` / `ITask` / `IHabit`
-      interfaces currently live inside each model file and aren't exported
-      (because `export =` can't coexist with other exports). Once controllers are
-      TS and need these types, move them to a shared `src/types/` file and import
-      them where needed.
-- [ ] **Tighten `tsconfig.json`:** set `allowJs: false` (no more `.js` to allow)
-      and consider turning on `checkJs`'s stricter cousins if desired.
-
-### B. Once **source AND tests** are `.ts`
-
-- [ ] **Remove the `--import tsx` hook from the `test` script.** It exists only to
-      let `.js` files `require()` `.ts` files (Node's native loader doesn't know
-      `.ts`). With everything on `.ts` + `import`, Vitest resolves `.ts` natively
-      and the hook is dead weight. Revert `test` back to `vitest run`.
-- [ ] Consider `@types/supertest` if Supertest's bundled types prove insufficient.
-
-### C. Production build (do before any real deploy)
-
-- [ ] **Add a real `tsc` build step.** `start` currently runs `tsx server.js`,
-      which is fine for dev but not ideal for production. Add a `build` script
-      (`tsc`, with `noEmit: false` + an `outDir: "dist"`), and change `start` to
-      `node dist/server.js`. A separate `tsconfig.build.json` keeps build vs.
-      type-check config clean.
-
-### D. The ESM flip (optional milestone — see discussion notes below)
-
-This is its own coherent step, best done **last**, once every file is `.ts`.
-
-- [ ] Set `"type": "module"` in `server/package.json`.
-- [ ] Switch `tsconfig` to ESM emit (`module`/`moduleResolution`: `nodenext`).
-- [ ] Add explicit file extensions to relative imports (`./db.js`). `tsc` will
-      flag every missing one for you.
-- [ ] Replace any `__dirname`/`__filename` usage with `import.meta`-based
-      equivalents (audit needed — may be none).
-- [ ] This overlaps with the `export =` → `export default` swap in section A.
-
-**Why last, not now:** flipping `"type": "module"` reinterprets _every remaining
-`.js` file_ as ESM at once, breaking all their `require`/`module.exports`. Doing
-it mid-migration would turn the gradual approach into a big-bang. Done at the end
-(zero `.js` files left), it's a contained afternoon. Payoff: the server then
-speaks the same module dialect as the client (already ESM via Vite).
-
-### E. Unrelated cleanups noticed during the migration
-
-- [ ] **Remove `nodemon` from server `devDependencies`** — replaced by
-      `tsx watch` in the `dev` script, now unused.
-- [ ] **Remove `axios` from client `dependencies`** — it's installed but never
-      imported; the client uses native `fetch` everywhere.
+The split tsconfig exists because the app code and the Vite config run in different environments (browser vs Node) with different globals.
+`tsc -b` (build mode) checks both via the project references in the root tsconfig.
 
 ---
 
-## Design decisions (for context)
+## What changed in the final push (2026-07-10)
 
-- **Hand-written interfaces over `InferSchemaType`.** Mongoose can infer a type
-  from a schema, but we hand-write the interface so the act of declaring each
-  field's type is explicit (better for learning, and the type is easy to read).
-  Revisit only if the duplication becomes painful.
+### Server
+
+- Converted everything that was still JS: `app`, `db`, `server` (moved to `src/server.ts`), both controllers, both routes, `validateObjectId`, all four test files, and `vitest.config.ts`.
+- Flipped to native ESM: `"type": "module"` in package.json, `module`/`moduleResolution: nodenext` in tsconfig, and explicit `.js` extensions on relative imports.
+- Cleanup checklist items A and B from the old version of this doc are done: models now use `export default`, the shared interfaces moved to `src/types/models.ts`, `allowJs` was removed, and the `--import tsx` test hook is gone (`test` is plain `vitest run` again).
+- Checklist item C is done: `npm run build` compiles through `tsconfig.build.json` into `dist/`, and `npm start` runs the compiled output with plain Node.
+- ESLint now lints `.ts` via `typescript-eslint`; `nodemon` was removed (dead weight since `tsx watch` took over).
+
+### Client
+
+- All 21 `.jsx` files became `.tsx`, plus `tagColors.js` -> `.ts` and `vite.config.js` -> `.ts`.
+- Added the three tsconfigs, `src/vite-env.d.ts` (types `import.meta.env.VITE_API_URL`), and `src/types.ts` with the shared API shapes (`Task`, `Habit`, `DueStatus`, `Urgency`, `TaskFilters`).
+- Every component now declares a props interface; state, refs, and event handlers are typed.
+- `npm run build` is now `tsc -b && vite build`, so a type error fails the build.
+- ESLint config extended with `typescript-eslint` over `.ts`/`.tsx`.
+
+### Repo root
+
+- Root package.json cleaned up: stale `"main": "index.js"` removed, `"type": "module"` set.
+
+---
+
+## TS concepts introduced during the migration
+
+- **Interfaces for wire data** (`client/src/types.ts`, `server/src/types/models.ts`): the same DB record has two shapes - on the server `_id` is an ObjectId and timestamps are `Date`s, but after JSON serialization the client sees plain strings.
+  Each side declares the shape it actually handles.
+- **String literal unions** (`type DueStatus = 'overdue' | 'today' | ...`): a value that can only be one of a fixed set of strings, so typos fail to compile.
+- **`Record<K, V>`** (`borderColor: Record<Urgency, string>`): an object required to have an entry for every member of a union.
+  Adding a new urgency without a color becomes a compile error.
+- **`unknown` in catch blocks**: TS types caught errors as `unknown`, forcing a narrowing check (`err instanceof Error`) before reading `.message`.
+  The server's duplicate-key check became a small type guard (`isDuplicateKeyError` in habitController).
+- **Type guards and narrowing**: early returns like `if (!dueDate) return ...` narrow `string | null` to `string` for the rest of the function.
+- **Non-null assertion `!`**: used only where we know more than the compiler (e.g. `document.getElementById('root')!`, or `.sort()` after a `.filter()` that guaranteed the field exists but which TS cannot see through).
+- **Generic hooks and refs**: `useState<Task[]>([])` (bare `[]` would infer `never[]`), `useRef<HTMLInputElement>(null)`.
+- **DOM vs React event types**: listeners attached to `document` receive DOM events (`MouseEvent`, `KeyboardEvent`); JSX handlers receive React synthetic events (`React.KeyboardEvent`).
+  `e.target` is a loose `EventTarget` and needs an `as HTMLElement` / `as Node` assertion before element-only APIs.
+- **`import type`**: type-only imports that are erased at compile time; plays well with `isolatedModules`, which keeps single-file transpilers like esbuild safe.
+- **NodeNext resolution**: with ESM Node, relative imports need explicit extensions, and you write `./db.js` (the emitted name) even though the source is `db.ts`.
+- **Project references / solution tsconfig** on the client: separate compilation environments for browser code and Node config files, checked together with `tsc -b`.
+
+---
+
+## Conventions going forward
+
+- New code is TypeScript only; there is no `allowJs` escape hatch anymore.
+- Server relative imports carry the `.js` extension (nodenext); client imports carry no extension (bundler resolution).
+- Run `npm run typecheck` (both packages) and the server tests before committing; the client build also type-checks.

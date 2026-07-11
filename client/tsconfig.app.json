@@ -1,0 +1,32 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "useDefineForClassFields": true,
+
+    // Vite is a bundler, so imports resolve bundler-style: no file
+    // extensions required on relative imports (unlike the server's nodenext).
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+
+    // Type-check JSX but don't transform it — Vite/esbuild does the emit.
+    "jsx": "react-jsx",
+
+    "strict": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
+
+    // Vite transpiles each file in isolation (no cross-file type info), so
+    // this bans TS constructs that can't be compiled file-by-file.
+    "isolatedModules": true,
+    "moduleDetection": "force",
+    "noEmit": true,
+
+    // Incremental build info for `tsc -b`, kept out of the repo
+    "composite": true,
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo"
+  },
+  "include": ["src"]
+}

@@ -1,15 +1,8 @@
 import mongoose, { Schema } from 'mongoose';
+import type { ITask } from '../types/models.js';
 
-interface ITask {
-  title: string;
-  description: string;
-  dueDate: string | null;
-  completed: boolean;
-  tags: string[];
-  createdAt: Date;
-  updatedAt: Date;
-}
-
+// Passing <ITask> ties the runtime schema to the compile-time type: if the
+// two drift apart, `npm run typecheck` flags it.
 const taskSchema = new Schema<ITask>(
   {
     title: {
@@ -42,4 +35,4 @@ const taskSchema = new Schema<ITask>(
   { timestamps: true },
 );
 
-export = mongoose.model<ITask>('Task', taskSchema);
+export default mongoose.model<ITask>('Task', taskSchema);

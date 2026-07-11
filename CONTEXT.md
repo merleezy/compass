@@ -10,6 +10,7 @@ Compass is a personal life dashboard for tracking habits, goals, tasks, and refl
 
 | Layer    | Technology                 |
 | -------- | -------------------------- |
+| Language | TypeScript (server + client, native ESM) |
 | Frontend | React + Vite               |
 | Backend  | Node.js + Express          |
 | Database | MongoDB 8.2.3 (via Docker) |
@@ -18,6 +19,7 @@ Compass is a personal life dashboard for tracking habits, goals, tasks, and refl
 | Routing  | React Router DOM           |
 | Icons    | Lucide React               |
 | Testing  | Vitest + Supertest         |
+| CI       | GitHub Actions             |
 
 ---
 

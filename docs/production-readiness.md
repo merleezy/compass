@@ -20,7 +20,7 @@ graph TD
 
 Focuses on local development guardrails. Prevents bad data from entering Mongoose, and stops bad commits from being pushed.
 
-- **[~] TypeScript Migration (in progress):** Static typing across server and client. Server toolchain is set up; models are being converted. Status and cleanup checklist live in [typescript-migration.md](./typescript-migration.md). See [Section 6](#6-dev-workflow--professionalism).
+- **[x] TypeScript Migration (complete):** Static typing across server and client, both packages on native ESM. Full writeup in [typescript-migration.md](./typescript-migration.md). See [Section 6](#6-dev-workflow--professionalism).
 - **[ ] Request Validation (Zod):** Validate inputs at the Express route boundary. See [Section 1](#1-backend--reliability).
 - **[ ] Pre-commit Hooks (Husky & lint-staged):** Prevent pushing code that fails linting or formatting. See [Section 6](#6-dev-workflow--professionalism).
 - **[ ] Clean Commit Messages:** Adopt Conventional Commits format (`feat:`, `fix:`). See [Section 6](#6-dev-workflow--professionalism).
@@ -30,7 +30,7 @@ Focuses on local development guardrails. Prevents bad data from entering Mongoos
 Focuses on proving that our changes don't break existing features automatically.
 
 - **[x] Backend Route Testing (Vitest + Supertest):** Integration tests for Habit and Task APIs covering happy and sad paths. See [Section 4](#4-testing-suite).
-- **[ ] GitHub Actions CI:** Run lint, typecheck, and tests in the cloud on every git push or pull request. See [Section 6](#6-dev-workflow--professionalism).
+- **[x] GitHub Actions CI:** Lint, typecheck, test, and build run in the cloud on every pull request and push to `main`. See [Section 6](#6-dev-workflow--professionalism).
 - **[ ] Data Integrity Tests:** Test database validation constraints in an isolated test environment. See [Section 2](#2-database--data-integrity).
 
 ### Phase 3: Security & Reliability (The Shield)
@@ -63,7 +63,7 @@ Focuses on moving from local execution to standard production environments.
 ### Centralized Error Handling
 
 - **Concept:** Funneling all route errors into a single Express error-handling middleware instead of catching and handling them ad-hoc in every controller.
-- **Compass Application:** Write a `server/src/middleware/errorHandler.js` containing `(err, req, res, next) => { ... }`.
+- **Compass Application:** Write a `server/src/middleware/errorHandler.ts` containing `(err, req, res, next) => { ... }`.
 - **Why it matters:** Guarantees that clients always receive consistent JSON error responses, prevents database stack traces from leaking to the client, and simplifies logging.
 
 ### Structured Logging
@@ -136,11 +136,12 @@ Focuses on moving from local execution to standard production environments.
 
 - **Concept:** Programmatically verifying small blocks of logic in isolation (unit) and database/route integrations (integration).
 - **Status: ✅ Implemented.** Vitest and Supertest are installed and configured with:
-  - `server/tests/setup.js` — Connects to the isolated `compass_test` database before all tests. Clears all collections before each individual test to ensure a clean state. Disconnects cleanly after all tests.
-  - `server/vitest.config.js` — Configures the setup file, enables Vitest globals (`describe`, `it`, `expect`), and disables file parallelism (all test files share the `compass_test` database, so parallel runs would wipe each other's data).
-  - `server/tests/health.test.js` — Verifies the health check endpoint returns 200.
-  - `server/tests/habits.test.js` — Full happy & sad path coverage for all 7 Habits API endpoints, including streak logic, soft delete, orphaned log prevention, and duplicate log conflict detection.
-  - `server/tests/tasks.test.js` — Full happy & sad path coverage for all 6 Tasks API endpoints, verifying complete/uncomplete actions, hard-delete permanence, and ID format validation.
+  - `server/tests/setup.ts` — Connects to the isolated `compass_test` database before all tests. Clears all collections before each individual test to ensure a clean state. Disconnects cleanly after all tests.
+  - `server/vitest.config.ts` — Configures the setup file, enables Vitest globals (`describe`, `it`, `expect`), and disables file parallelism (all test files share the `compass_test` database, so parallel runs would wipe each other's data).
+  - `server/tests/health.test.ts` — Verifies the health check endpoint returns 200.
+  - `server/tests/habits.test.ts` — Full happy & sad path coverage for all 7 Habits API endpoints, including streak logic, soft delete, orphaned log prevention, and duplicate log conflict detection.
+  - `server/tests/tasks.test.ts` — Full happy & sad path coverage for all 6 Tasks API endpoints, verifying complete/uncomplete actions, hard-delete permanence, and ID format validation.
+  - These 42 tests run automatically in CI against a MongoDB service container. See [Section 6](#6-dev-workflow--professionalism).
 
 ### End-to-End (E2E) Testing
 
@@ -168,7 +169,7 @@ Focuses on moving from local execution to standard production environments.
 ### TypeScript Conversion
 
 - **Concept:** Enforcing static typing at compile-time to prevent runtime type errors.
-- **Status: 🚧 In progress.** Server toolchain (`tsx`, `tsc`, `tsconfig.json`) is set up and models are being converted file-by-file. Full status, toolchain explanation, and post-migration cleanup checklist: [typescript-migration.md](./typescript-migration.md).
+- **Status: ✅ Complete.** Every server and client source file is TypeScript, and both packages run on native ESM. Full toolchain explanation and TS concepts introduced: [typescript-migration.md](./typescript-migration.md).
 - **Why it matters:** Catches object mapping errors and property typo bugs before running the app.
 
 ### Pre-commit Hooks (Husky)
@@ -179,11 +180,10 @@ Focuses on moving from local execution to standard production environments.
 ### GitHub Actions CI
 
 - **Concept:** Setting up a cloud pipeline to verify every commit pushed to remote repositories.
-- **Compass Application:** Create `.github/workflows/ci.yml` that runs on pull requests, with three checks per workspace:
-  1. `npm run lint` — style and correctness rules.
-  2. `npm run typecheck` (server, and client once migrated) — **this step is essential with our toolchain**: `tsx` and Vitest only *strip* types to run code fast, they never *validate* them. Without `tsc --noEmit` in CI, type errors ship silently.
-  3. `npm test` — the integration tests need a real MongoDB, so the workflow must declare a `mongodb` **service container** and point `MONGODB_URI` at it (tests won't have our local Docker instance in the cloud).
-- **Why it matters:** Local discipline (hooks, manual test runs) is opt-in; CI is the enforced safety net on every push.
+- **Status: ✅ Implemented.** [`.github/workflows/ci.yml`](../.github/workflows/ci.yml) runs on every pull request and on pushes to `main`, as two parallel jobs:
+  1. **`server`** — `npm run typecheck` (`tsc --noEmit`), `npm run lint`, `npm test` against a `mongodb:8.2.3` **service container** (points `DB_TEST_URI` at it since there's no local Docker instance in the cloud), then `npm run build` to confirm the `dist/` build compiles.
+  2. **`client`** — `npm run typecheck` (`tsc -b`), `npm run lint`, `npm run build` (Vite build, with `tsc -b` running first so a type error fails the build).
+- **Why it matters:** `tsx` and Vitest only *strip* types to run code fast, they never *validate* them, so `typecheck` in CI is what actually catches type errors — local discipline (manual test runs) is opt-in, CI is the enforced safety net on every push.
 
 ---
 

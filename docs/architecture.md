@@ -48,7 +48,7 @@ Instead of resetting daily habits at midnight UTC (which causes them to reset at
 
 ### Vite proxy for `/api` requests
 
-All frontend calls are sent to `/api/*` and proxied to `http://localhost:5000` via `vite.config.js`. This eliminates the need to hardcode API URLs in our client code and mirrors how a production reverse proxy (like Nginx) works.
+All frontend calls are sent to `/api/*` and proxied to `http://localhost:5000` via `vite.config.ts`. This eliminates the need to hardcode API URLs in our client code and mirrors how a production reverse proxy (like Nginx) works.
 
 ---
 

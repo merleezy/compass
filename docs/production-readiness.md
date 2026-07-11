@@ -136,11 +136,11 @@ Focuses on moving from local execution to standard production environments.
 
 - **Concept:** Programmatically verifying small blocks of logic in isolation (unit) and database/route integrations (integration).
 - **Status: ✅ Implemented.** Vitest and Supertest are installed and configured with:
-  - `server/tests/setup.js` — Connects to the isolated `compass_test` database before all tests. Clears all collections before each individual test to ensure a clean state. Disconnects cleanly after all tests.
-  - `server/vitest.config.js` — Configures the setup file, enables Vitest globals (`describe`, `it`, `expect`), and disables file parallelism (all test files share the `compass_test` database, so parallel runs would wipe each other's data).
-  - `server/tests/health.test.js` — Verifies the health check endpoint returns 200.
-  - `server/tests/habits.test.js` — Full happy & sad path coverage for all 7 Habits API endpoints, including streak logic, soft delete, orphaned log prevention, and duplicate log conflict detection.
-  - `server/tests/tasks.test.js` — Full happy & sad path coverage for all 6 Tasks API endpoints, verifying complete/uncomplete actions, hard-delete permanence, and ID format validation.
+  - `server/tests/setup.ts` — Connects to the isolated `compass_test` database before all tests. Clears all collections before each individual test to ensure a clean state. Disconnects cleanly after all tests.
+  - `server/vitest.config.ts` — Configures the setup file and disables file parallelism (all test files share the `compass_test` database, so parallel runs would wipe each other's data).
+  - `server/tests/health.test.ts` — Verifies the health check endpoint returns 200.
+  - `server/tests/habits.test.ts` — Full happy & sad path coverage for all 7 Habits API endpoints, including streak logic, soft delete, orphaned log prevention, and duplicate log conflict detection.
+  - `server/tests/tasks.test.ts` — Full happy & sad path coverage for all 6 Tasks API endpoints, verifying complete/uncomplete actions, hard-delete permanence, and ID format validation.
 
 ### End-to-End (E2E) Testing
 

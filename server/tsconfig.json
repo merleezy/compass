@@ -1,0 +1,33 @@
+{
+  "compilerOptions": {
+    // Output a modern JS feature set — Node 18+ supports all of ES2022.
+    "target": "ES2022",
+    "lib": ["ES2022"],
+
+    // The server is now native ESM ("type": "module" in package.json).
+    // NodeNext makes tsc resolve modules exactly the way Node itself does,
+    // including requiring explicit ".js" extensions on relative imports.
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+
+    // Lets `import x from 'cjs-package'` work against CommonJS packages like
+    // express/mongoose without the awkward `import * as x` form.
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "forceConsistentCasingInFileNames": true,
+
+    // The whole point of the migration: turn on all the safety checks.
+    // (noImplicitAny, strictNullChecks, etc. all flip on together.)
+    "strict": true,
+
+    // Don't type-check inside node_modules — trust the libraries' own types.
+    // Keeps error output focused on YOUR code.
+    "skipLibCheck": true,
+
+    // tsx (dev) and vitest (tests) do the actual transpiling, so this config
+    // is only used as a type-checker (`npm run typecheck`), not to emit.
+    // The production build uses tsconfig.build.json instead.
+    "noEmit": true
+  },
+  "include": ["src", "tests", "vitest.config.ts"]
+}

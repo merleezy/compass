@@ -20,6 +20,7 @@ graph TD
 
 Focuses on local development guardrails. Prevents bad data from entering Mongoose, and stops bad commits from being pushed.
 
+- **[~] TypeScript Migration (in progress):** Static typing across server and client. Server toolchain is set up; models are being converted. Status and cleanup checklist live in [typescript-migration.md](./typescript-migration.md). See [Section 6](#6-dev-workflow--professionalism).
 - **[ ] Request Validation (Zod):** Validate inputs at the Express route boundary. See [Section 1](#1-backend--reliability).
 - **[ ] Pre-commit Hooks (Husky & lint-staged):** Prevent pushing code that fails linting or formatting. See [Section 6](#6-dev-workflow--professionalism).
 - **[ ] Clean Commit Messages:** Adopt Conventional Commits format (`feat:`, `fix:`). See [Section 6](#6-dev-workflow--professionalism).
@@ -29,7 +30,7 @@ Focuses on local development guardrails. Prevents bad data from entering Mongoos
 Focuses on proving that our changes don't break existing features automatically.
 
 - **[x] Backend Route Testing (Vitest + Supertest):** Integration tests for Habit and Task APIs covering happy and sad paths. See [Section 4](#4-testing-suite).
-- **[ ] GitHub Actions CI:** Run linters and tests in the cloud on every git push or pull request. See [Section 6](#6-dev-workflow--professionalism).
+- **[ ] GitHub Actions CI:** Run lint, typecheck, and tests in the cloud on every git push or pull request. See [Section 6](#6-dev-workflow--professionalism).
 - **[ ] Data Integrity Tests:** Test database validation constraints in an isolated test environment. See [Section 2](#2-database--data-integrity).
 
 ### Phase 3: Security & Reliability (The Shield)
@@ -100,7 +101,7 @@ Focuses on moving from local execution to standard production environments.
 ### Migration Strategy
 
 - **Concept:** Managing database structure changes (schema changes) programmatically over time.
-- **Compass Application:** Add a tool like `migrate-mongo` to write run-up/run-down migration scripts (e.g. when transition habits from binary types to progressive types in V3).
+- **Compass Application:** Add a tool like `migrate-mongo` to write run-up/run-down migration scripts (e.g. when transitioning habits from binary types to progressive types in V3).
 
 ### Pagination for Large Datasets
 
@@ -120,7 +121,7 @@ Focuses on moving from local execution to standard production environments.
 ### Component Abstraction & Reusable Hooks
 
 - **Concept:** Extracting business logic from presentational components into custom React hooks (e.g., `useHabits`).
-- **Compass Application:** Moving data loading and state manipulation out of `HabitsPage.jsx` into hooks.
+- **Compass Application:** Moving data loading and state manipulation out of `HabitsPage.tsx` into hooks.
 
 ### Accessibility (a11y)
 
@@ -133,10 +134,10 @@ Focuses on moving from local execution to standard production environments.
 
 ### Unit & Integration Testing
 
-- **Concept:** Programmatically verifying small blocks of isolation logic (unit) and database/route integrations (integration).
+- **Concept:** Programmatically verifying small blocks of logic in isolation (unit) and database/route integrations (integration).
 - **Status: ✅ Implemented.** Vitest and Supertest are installed and configured with:
   - `server/tests/setup.js` — Connects to the isolated `compass_test` database before all tests. Clears all collections before each individual test to ensure a clean state. Disconnects cleanly after all tests.
-  - `server/vitest.config.js` — Configures the setup file and enables Vitest globals (`describe`, `it`, `expect`) to avoid CommonJS/ESM import conflicts.
+  - `server/vitest.config.js` — Configures the setup file, enables Vitest globals (`describe`, `it`, `expect`), and disables file parallelism (all test files share the `compass_test` database, so parallel runs would wipe each other's data).
   - `server/tests/health.test.js` — Verifies the health check endpoint returns 200.
   - `server/tests/habits.test.js` — Full happy & sad path coverage for all 7 Habits API endpoints, including streak logic, soft delete, orphaned log prevention, and duplicate log conflict detection.
   - `server/tests/tasks.test.js` — Full happy & sad path coverage for all 6 Tasks API endpoints, verifying complete/uncomplete actions, hard-delete permanence, and ID format validation.
@@ -167,18 +168,22 @@ Focuses on moving from local execution to standard production environments.
 ### TypeScript Conversion
 
 - **Concept:** Enforcing static typing at compile-time to prevent runtime type errors.
-- **Compass Application:** Progressively migrate `.js`/`.jsx` files to `.ts`/`.tsx`.
+- **Status: 🚧 In progress.** Server toolchain (`tsx`, `tsc`, `tsconfig.json`) is set up and models are being converted file-by-file. Full status, toolchain explanation, and post-migration cleanup checklist: [typescript-migration.md](./typescript-migration.md).
 - **Why it matters:** Catches object mapping errors and property typo bugs before running the app.
 
 ### Pre-commit Hooks (Husky)
 
 - **Concept:** Running linters and formatters automatically during code stage check-ins.
-- **Compass Application:** Set up Husky to block `git commit` actions if ESLint checks fail.
+- **Compass Application:** Set up Husky to block `git commit` actions if ESLint checks fail. Keep the hook fast (lint-staged on changed files only); leave the full typecheck and test suite to CI.
 
 ### GitHub Actions CI
 
-- **Concept:** Setting up a cloud pipeline to test every commit pushed to remote repositories.
-- **Compass Application:** Create `.github/workflows/ci.yml` to run tests and lints automatically on pull requests.
+- **Concept:** Setting up a cloud pipeline to verify every commit pushed to remote repositories.
+- **Compass Application:** Create `.github/workflows/ci.yml` that runs on pull requests, with three checks per workspace:
+  1. `npm run lint` — style and correctness rules.
+  2. `npm run typecheck` (server, and client once migrated) — **this step is essential with our toolchain**: `tsx` and Vitest only *strip* types to run code fast, they never *validate* them. Without `tsc --noEmit` in CI, type errors ship silently.
+  3. `npm test` — the integration tests need a real MongoDB, so the workflow must declare a `mongodb` **service container** and point `MONGODB_URI` at it (tests won't have our local Docker instance in the cloud).
+- **Why it matters:** Local discipline (hooks, manual test runs) is opt-in; CI is the enforced safety net on every push.
 
 ---
 
@@ -188,6 +193,12 @@ Focuses on moving from local execution to standard production environments.
 
 - **Concept:** Writing optimized Dockerfiles to compile production-ready assets while leaving heavy build tools behind.
 - **Compass Application:** Build Vite assets in a node environment container, copy them to a lightweight Nginx server container, and deploy the Express API separately.
+
+### Compiled TypeScript in Production
+
+- **Concept:** Production servers should run plain compiled JavaScript, not transpile TypeScript on the fly.
+- **Compass Application:** Done — `npm run build` compiles via `tsconfig.build.json` into `dist/`, and `npm start` runs `node dist/server.js`. In Docker terms, `tsc` runs in the build stage and only `dist/` ships in the final image.
+- **Why it matters:** Faster cold starts, no dev-tooling dependency in the production image, and the build step doubles as a final full typecheck before release.
 
 ### Health Checks
 

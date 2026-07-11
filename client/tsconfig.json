@@ -1,0 +1,8 @@
+{
+  // Solution-style root config: no files of its own, just points at the two
+  // real configs. "tsc -b" builds both. Split because the app code (browser)
+  // and vite.config.ts (Node) run in different environments with different
+  // globals and module rules.
+  "files": [],
+  "references": [{ "path": "./tsconfig.app.json" }, { "path": "./tsconfig.node.json" }]
+}

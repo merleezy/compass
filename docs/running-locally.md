@@ -55,16 +55,20 @@ compass/
 │   │   │   └── layout/             # Layout shell (Sidebar, TopBar)
 │   │   ├── pages/                  # Page-level components
 │   │   ├── index.css               # Tailwind imports & theme configuration
-│   │   └── main.jsx                # App Router entrypoint
-│   └── vite.config.js              # Vite config (Tailwind + API Proxy)
+│   │   ├── types.ts                # Shared API types (Task, Habit, filters)
+│   │   └── main.tsx                # App Router entrypoint
+│   ├── tsconfig.json               # TS project refs (app + node configs)
+│   └── vite.config.ts              # Vite config (Tailwind + API Proxy)
 │
 ├── server/                         # Node/Express backend
 │   ├── src/
 │   │   ├── controllers/            # Controller logic (Habits, Tasks)
 │   │   ├── models/                 # Mongoose models (Habit, HabitLog, Task)
 │   │   ├── routes/                 # Express API routes
-│   │   └── db.js                   # Mongoose connection config
-│   ├── server.js                   # Express server entrypoint
+│   │   ├── types/                  # Shared model interfaces
+│   │   ├── db.ts                   # Mongoose connection config
+│   │   └── server.ts               # Express server entrypoint
+│   ├── tsconfig.json               # Type-check config (tsconfig.build.json emits dist/)
 │   └── eslint.config.mjs           # Backend ESLint configuration (ESM format)
 │
 ├── docs/                           # Project documentation

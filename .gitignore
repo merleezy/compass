@@ -3,6 +3,3 @@ node_modules/
 dist/
 
 .docker/ 
-
-# Personal files
-CONTEXT.md 

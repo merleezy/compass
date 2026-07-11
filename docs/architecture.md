@@ -38,6 +38,10 @@ To record daily completions, we use two separate collections: `Habits` (defines 
 
 Enforces that a habit can only be logged once per day at the database layer. This prevents double-clicks or network retries from creating duplicate logs, returning a `409 Conflict` if violated.
 
+### Invalid ObjectId Guard (`validateObjectId` middleware)
+
+Every route with an `:id` param runs a shared `validateObjectId` middleware that checks `mongoose.isValidObjectId` before the controller. A malformed id (e.g. `/api/tasks/abc`) is a client error, so it returns `400` with a clear message — instead of letting Mongoose throw a `CastError` that the generic catch block would surface as a misleading `500`. Centralizing it as middleware keeps every controller free of repeated id checks.
+
 ### Timezone-Sensitive Local Resets
 
 Instead of resetting daily habits at midnight UTC (which causes them to reset at 7:00 PM Central time for US developers), the browser extracts the local IANA timezone (`Intl.DateTimeFormat().resolvedOptions().timeZone`) and passes it to the API. The server formats dates using the `en-CA` locale within that timezone to get the correct local `YYYY-MM-DD` date.
@@ -59,8 +63,8 @@ All frontend calls are sent to `/api/*` and proxied to `http://localhost:5000` v
 | **GET**    | `/api/habits/today`   | Get habits with completion flags for today |
 | **POST**   | `/api/habits/:id/log` | Mark a habit complete for today            |
 | **DELETE** | `/api/habits/:id/log` | Unmark a habit (undo completion)           |
-| **PATCH**  | `/api/habits/:id`     | Edit habit name/description                |
-| **DELETE** | `/api/habits/:id`     | Delete a habit and its log history         |
+| **PUT**    | `/api/habits/:id`     | Edit habit name/description                |
+| **DELETE** | `/api/habits/:id`     | Soft-delete a habit (preserves log history) |
 
 > **Route Order Note:** `/today` is declared _before_ `/:id` in our Express router. Otherwise, Express treats the word "today" as a parameter ID and crashes.
 
@@ -68,9 +72,9 @@ All frontend calls are sent to `/api/*` and proxied to `http://localhost:5000` v
 
 | Method     | Route                       | Purpose                                   |
 | :--------- | :-------------------------- | :---------------------------------------- |
-| **GET**    | `/api/tasks`                | Get all active tasks                      |
+| **GET**    | `/api/tasks`                | Get all tasks (no active filter)          |
 | **POST**   | `/api/tasks`                | Create a new task                         |
-| **PATCH**  | `/api/tasks/:id`            | Edit task (title, description, due date)  |
+| **PATCH**  | `/api/tasks/:id`            | Edit task (title, description, due date, tags) |
 | **PATCH**  | `/api/tasks/:id/complete`   | Complete a task (moves to completed list) |
 | **PATCH**  | `/api/tasks/:id/uncomplete` | Mark a completed task active again        |
 | **DELETE** | `/api/tasks/:id`            | Delete a task (hard delete)               |
